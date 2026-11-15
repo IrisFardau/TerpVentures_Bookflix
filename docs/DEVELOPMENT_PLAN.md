@@ -16,7 +16,7 @@ Each stream updates only its own rows.
 |---|---|---|---|---|
 | 0 Plan | joint | `main` | none | Done |
 | 1R Site shell | R | `phase-1r-site-shell` | 0 | In review |
-| 1I Data tooling | I | `phase-1i-data-tooling` | 0 | Not started |
+| 1I Data tooling | I | `phase-1i-data-tooling` | 0 | In review |
 | 2R Home page and carousels | R | `phase-2r-home-carousels` | 1R, 1I | Not started |
 | 2I Detail page | I | `phase-2i-detail-page` | 1R, 1I | Not started |
 | 3R Home page polish | R | `phase-3r-home-polish` | 2R, 2I | Not started |
@@ -105,7 +105,7 @@ This contract is the interface between the two streams. Changing it requires agr
 | `extraTeaser` | string | yes | Dutch, spoiler-free, what the book offers beyond the film or series (30 to 60 words) |
 | `links` | object[] | yes | Where to get the book, `{ "label": "Bibliotheek", "url": "https://..." }`. Starts with the bibliotheek.nl title page; more can be added later |
 
-`tools/validate_books.py` checks the types and required fields above. With `--strict` it also checks that `teaser` and `extraTeaser` are 30 to 60 words, that the cover file exists, that `length` matches `pages`, and that `links` has at least one entry. All ten book files already meet the contract (see [PR #1](https://github.com/IrisFardau/TerpVentures_Bookflix/pull/1)).
+`tools/validate_books.py` checks the types and required fields above, the ISBN-13 check digit, unknown fields (typos), that the filename matches `id`, and that every id in the catalogue has a file. With `--strict` it also checks the content rules from section 5 and `docs/CONTENT_GUIDE.md`: at most 350 pages, `length` and `readingTimeMinutes` match `pages`, `teaser` and `extraTeaser` are 30 to 60 words, the cover is a JPEG at `assets/covers/<id>.jpg`, the first link is the bibliotheek.nl title page, `adaptation.platform` is "Netflix", two or three genres with "Graphic novel" first for a graphic novel, lowercase content warnings, and that each book is in the right catalogue rows. Style hints (empty praise, possible spoilers, new genres, unused covers, short/medium balance) are warnings that don't fail the run. All ten book files pass `--strict`.
 
 `data/catalog.json`:
 
@@ -193,6 +193,13 @@ Both streams depend only on this plan and can start immediately.
 - `CONTENT_GUIDE.md`: tone for the target group, the spoiler-free rule, how to write `teaser` and `extraTeaser` (30 to 60 words, `extraTeaser` about what the book adds), choosing `age` and `contentWarnings`, the reading-time formula, and how to find the edition, ISBN and link on bibliotheek.nl.
 - Acceptance: the validator passes on all ten books, also with `--strict`, and fails with a clear message on a deliberately broken file.
 
+*1I notes (decisions and deviations):*
+- 1I was built on the branch `claude/charming-mayer-xmj84x` instead of `phase-1i-data-tooling`, together with the book data and the plan updates for the new contract.
+- The teaser limit is 30 to 60 words instead of the 40 to 70 first written in section 4: six of the ten texts are shorter than 40 words, and short suits the target group.
+- `validate_books.py` has three levels: contract errors (always), content errors (`--strict`) and warnings (never fail). Rules that need judgement, like spoilers and empty praise, are warnings based on word lists in the script; they help a reviewer but don't replace one.
+- The validator has a hidden `--root <dir>` option to run it on a copy of `data/` and `assets/`. The acceptance test used it on copies with a broken JSON file, a wrong ISBN check digit, too many pages, a missing cover, a non-JPEG cover, a wrong `id`, an unknown field and catalogue mistakes; each gave a clear error and exit code 1.
+- The content guide is in English like the other docs, with Dutch examples.
+
 ### Phase 2: Core features
 
 Both streams depend on 1R **and** 1I being merged: the UI needs the shell and data loader from 1R, the content needs the tools and guide from 1I.
@@ -241,6 +248,6 @@ Depends on 3R and 3I. One branch, `phase-4-release`, worked on together.
 ## 8. Verification summary
 
 - Local server: `python -m http.server 8000`, then http://localhost:8000.
-- Data: `python tools/validate_books.py` (phase 1), with `--strict` from the end of phase 2.
+- Data: `python tools/validate_books.py --strict` (passes from phase 1I on).
 - Per phase: the acceptance checks in section 7.
 - Whole site: `docs/TEST_CHECKLIST.md` (from phase 3I).
