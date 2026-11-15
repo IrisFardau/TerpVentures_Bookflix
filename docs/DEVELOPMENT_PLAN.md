@@ -1,0 +1,222 @@
+# Bookflix development plan
+
+## 1. Goal
+
+A Dutch-language website with a streaming-service look that shows books which were made into a film or TV series. It should encourage young people (assumed 12 to 18) to read, starting from what they already watch.
+
+Prototype scope: 10 popular books, a home page with cover carousels, and a detail page per book with a spoiler-free description of what the book adds to the film or series, plus a link to the book on bibliotheek.nl.
+
+Out of scope for the prototype: search, accounts, a CMS, a backend, hosting.
+
+## 2. Status
+
+Each stream updates only its own rows.
+
+| Phase | Stream | Branch | Depends on | Status |
+|---|---|---|---|---|
+| 0 Plan | joint | `main` | none | Done |
+| 1R Site shell | R | `phase-1r-site-shell` | 0 | Not started |
+| 1I Data tooling | I | `phase-1i-data-tooling` | 0 | Not started |
+| 2R Home page and carousels | R | `phase-2r-home-carousels` | 1R, 1I | Not started |
+| 2I Detail page | I | `phase-2i-detail-page` | 1R, 1I | Not started |
+| 3R Home page polish | R | `phase-3r-home-polish` | 2R, 2I | Not started |
+| 3I Detail page polish | I | `phase-3i-detail-polish` | 2R, 2I | Not started |
+| 4 Prototype release | joint | `phase-4-release` | 3R, 3I | Not started |
+
+```
+0 Plan ──┬─> 1R ─┬─> 2R ─┬─> 3R ─┬─> 4 Release
+         └─> 1I ─┘─> 2I ─┘─> 3I ─┘
+```
+
+Within a phase, R and I run in parallel and touch no common files. A phase starts only when **both** streams of the previous phase are merged to `main`.
+
+## 3. Technical approach
+
+**Stack.** Plain HTML, CSS and JavaScript ES modules. No framework, no build step, no Node.js. Book data lives in JSON files that the pages load with `fetch`. Python is used only for the local server and helper scripts (standard library only).
+
+**Run locally.** From the repo root:
+
+```
+python -m http.server 8000
+```
+
+Then open http://localhost:8000. Opening the HTML files directly from disk does not work, because `fetch` is blocked on `file://`.
+
+**Directory layout.**
+
+```
+index.html                 home page (hero + carousels)
+boek.html                  detail page, opened as boek.html?id=<book-id>
+css/tokens.css             colours, type scale, spacing (dark streaming theme)
+css/base.css               reset, header, footer, shared components
+css/home.css               hero and carousels
+css/detail.css             detail page
+js/data.js                 loads the catalogue and book files
+js/carousel.js             carousel component
+js/home.js                 builds the home page
+js/detail.js               builds the detail page
+data/catalog.json          carousel rows and the featured book
+data/books/<book-id>.json  one file per book
+assets/covers/<book-id>.jpg
+assets/placeholder-cover.svg
+tools/validate_books.py    checks the data against the contract
+tools/fetch_covers.py      downloads covers by ISBN
+docs/DEVELOPMENT_PLAN.md   this plan
+docs/CONTENT_GUIDE.md      how to write the Dutch book texts
+README.md                  how to run and test locally
+```
+
+One file per book is what lets both streams write content at the same time without merge conflicts.
+
+**Language.** All text visible on the site is Dutch (`<html lang="nl">`). Code, JSON keys, commit messages and docs are English.
+
+## 4. Data contract
+
+This contract is the interface between the two streams. Changing it requires agreement from both and an update to this section.
+
+`data/books/<book-id>.json`:
+
+| Field | Type | Required | Notes |
+|---|---|---|---|
+| `id` | string | yes | Same as the filename, lowercase with hyphens |
+| `title` | string | yes | Dutch title |
+| `author` | string | yes | |
+| `isbn` | string | yes | ISBN-13 of a Dutch edition, digits only |
+| `cover` | string | strict | Path such as `assets/covers/<id>.jpg` |
+| `adaptation.type` | `"film"` or `"serie"` | yes | |
+| `adaptation.title` | string | yes | Title of the film or series as known in the Netherlands |
+| `adaptation.year` | number | yes | |
+| `adaptation.platform` | string | no | For example "Netflix" |
+| `genres` | string[] | yes | Dutch genre names, used for carousel rows |
+| `age` | string | no | For example "12+" |
+| `tagline` | string | strict | One sentence, max 120 characters, shown in the hero and on hover |
+| `description` | string | strict | Spoiler-free, 60 to 120 words |
+| `extras` | string[] | strict | 2 to 4 short points: what the book offers beyond the film or series |
+| `libraryUrl` | string | strict | Link to the book on bibliotheek.nl |
+
+"strict" fields may be missing during phase 1 and are required from the end of phase 2 (`validate_books.py --strict`).
+
+`data/catalog.json`:
+
+```json
+{
+  "featured": "<book-id>",
+  "rows": [
+    { "title": "Bekend van Netflix", "books": ["<book-id>", "..."] }
+  ]
+}
+```
+
+`js/data.js` exposes `loadCatalog()`, `loadBook(id)` and `loadAllBooks()`. A book file that is missing or invalid is skipped with a console warning, so the site keeps working while content is still being added.
+
+## 5. Open questions and how they are handled
+
+**Book covers.** `tools/fetch_covers.py` downloads each cover once by ISBN and stores it in `assets/covers/`, so the site never depends on an external service at runtime. Sources, in order:
+1. Open Library Covers API: `https://covers.openlibrary.org/b/isbn/<isbn>-L.jpg?default=false`
+2. Google Books API: `https://www.googleapis.com/books/v1/volumes?q=isbn:<isbn>` (`imageLinks`)
+3. No result: the site shows `assets/placeholder-cover.svg` with the title on it, and the cover is added by hand.
+
+Covers are copyrighted. Using them in a local prototype is low risk, but permission and source must be checked before the site goes public (phase 4 decision).
+
+**bibliotheek.nl links.** `libraryUrl` is stored per book as a complete URL, looked up by hand. Stream I documents in `docs/CONTENT_GUIDE.md` (phase 1I) which URL form is stable: preferably the title page of the book, otherwise a catalogue search on ISBN.
+
+**The 10 books.** Proposal below. Dutch titles, ISBNs and adaptation details are verified in phase 1 by the owner; swapping a book is allowed if this table is updated.
+
+| Book id | Book | Adaptation | Content owner |
+|---|---|---|---|
+| `harry-potter-steen-der-wijzen` | Harry Potter en de Steen der Wijzen, J.K. Rowling | Film | R |
+| `de-hongerspelen` | De Hongerspelen, Suzanne Collins | Film | R |
+| `heartstopper-1` | Heartstopper deel 1, Alice Oseman | Series (Netflix) | R |
+| `oorlogswinter` | Oorlogswinter, Jan Terlouw | Film | R |
+| `duin` | Duin, Frank Herbert | Film | R |
+| `percy-jackson-bliksemdief` | Percy Jackson en de bliksemdief, Rick Riordan | Series (Disney+) | I |
+| `wonder` | Wonder, R.J. Palacio | Film | I |
+| `the-hate-u-give` | The Hate U Give, Angie Thomas | Film | I |
+| `de-zomer-dat-ik-mooi-werd` | The Summer I Turned Pretty (Dutch edition), Jenny Han | Series (Prime Video) | I |
+| `schim-en-schaduw` | Shadow and Bone (Dutch edition), Leigh Bardugo | Series (Netflix) | I |
+
+## 6. Workflow for every phase
+
+1. Update `main`, then create the phase branch from it (names in the status table).
+2. Build the phase. Stay inside the files listed for your stream.
+3. Test locally: run the server, walk through the acceptance checks of the phase, run `python tools/validate_books.py`.
+4. Code review of the branch diff against `main` (`/code-review` in Claude Code). Fix the findings or record why not.
+5. Update this plan on the same branch: your row in the status table, plus any deviations or decisions in your phase section.
+6. Push the branch and open a pull request to `main` on GitHub. The other developer reviews and merges. If `main` moved, rebase first.
+
+Nothing is committed directly to `main` after phase 0. The GitHub CLI is not installed, so pull requests are opened in the GitHub web interface.
+
+## 7. Phases
+
+### Phase 1: Foundation
+
+Both streams depend only on this plan and can start immediately.
+
+**1R Site shell** (`phase-1r-site-shell`)
+- Files: `index.html`, `boek.html`, `css/tokens.css`, `css/base.css`, `js/data.js`, `data/catalog.json`, `assets/placeholder-cover.svg`, `README.md`, `.gitignore`, and `data/books/` files for the five R books.
+- UI: page shells with shared header and footer, the dark streaming theme as CSS variables, Dutch interface text.
+- Data loading: `js/data.js` as described in the data contract, including skipping missing book files.
+- `data/catalog.json` with first rows (for example "Bekend van Netflix", "Van boek naar film", "Fantasy") that reference all ten book ids from section 5.
+- Content: metadata for the five R books (all non-strict fields, verified Dutch title and ISBN).
+- README: how to run and test locally.
+- Acceptance: both pages load on localhost with header and footer; the browser console lists the loaded R books and warns about the five I books not yet present.
+
+**1I Data tooling** (`phase-1i-data-tooling`)
+- Files: `tools/validate_books.py`, `tools/fetch_covers.py`, `docs/CONTENT_GUIDE.md`, and `data/books/` files for the five I books.
+- `validate_books.py`: checks every book file against the contract, that the filename matches `id`, that catalogue ids resolve to a file, and with `--strict` also the strict fields, word limits and that the cover file exists. Exit code 1 on errors.
+- `fetch_covers.py`: for each book without a cover file, tries the sources from section 5 and reports which books still need a cover by hand.
+- `CONTENT_GUIDE.md`: tone for the target group, the spoiler-free rule, the focus on what the book adds, length limits, and how to find the bibliotheek.nl link.
+- Content: metadata for the five I books.
+- Acceptance: the validator passes on the I books and fails with a clear message on a deliberately broken file; the cover script downloads at least one cover.
+
+### Phase 2: Core features
+
+Both streams depend on 1R **and** 1I being merged: the UI needs the shell and data loader from 1R, the content needs the tools and guide from 1I.
+
+**2R Home page and carousels** (`phase-2r-home-carousels`)
+- Files: `index.html`, `css/home.css`, `js/carousel.js`, `js/home.js`, covers and book files for the five R books.
+- UI: hero banner for the featured book (cover, title, tagline, button "Bekijk boek"); one carousel per catalogue row with cover and title per book; horizontal scrolling with arrow buttons, touch and keyboard; hover effect; each card links to `boek.html?id=<id>`; placeholder cover when an image is missing.
+- Content: covers, `tagline`, `description`, `extras` and `libraryUrl` for the five R books, following the content guide.
+- Acceptance: all rows render from `catalog.json`; arrows scroll; every card opens the right detail URL; `validate_books.py --strict` passes for the R books.
+
+**2I Detail page** (`phase-2i-detail-page`)
+- Files: `boek.html`, `css/detail.css`, `js/detail.js`, covers and book files for the five I books.
+- UI: cover, title, author, a badge such as "Bekend van de Netflix-serie (2021)", genres and age, the description, a section "Wat biedt het boek extra?" listing `extras`, a button "Leen bij de Bibliotheek" that opens `libraryUrl` in a new tab, a link back to the home page, and a friendly Dutch message for an unknown or missing id.
+- Content: the same strict fields for the five I books.
+- Acceptance: `boek.html?id=<id>` works for every book that has a file; an unknown id shows the not-found message; the library button is hidden when `libraryUrl` is missing; `--strict` passes for the I books.
+
+### Phase 3: Polish
+
+Both streams depend on 2R and 2I being merged. R stays on the home page files, I on the detail page files, and each reviews the other's book texts.
+
+**3R Home page polish** (`phase-3r-home-polish`)
+- Files: `index.html`, `css/home.css`, `css/base.css`, `css/tokens.css`, `js/carousel.js`, `js/home.js`, and text fixes in the five **I** book files.
+- Responsive layout from phone to desktop; keyboard operation and visible focus in the carousels; alt texts; colour contrast; reduced-motion support; lazy loading of covers.
+- Content review of the I books: spoilers, Dutch spelling and tone, working library links.
+- Acceptance: usable at 360 px width with no horizontal page scroll; the whole home page can be operated by keyboard.
+
+**3I Detail page polish** (`phase-3i-detail-polish`)
+- Files: `boek.html`, `css/detail.css`, `js/detail.js`, `docs/TEST_CHECKLIST.md`, and text fixes in the five **R** book files.
+- Responsive detail page; accessibility as in 3R; a row "Meer zoals dit" with books sharing a genre; page title and description meta tags per book; favicon.
+- `docs/TEST_CHECKLIST.md`: a manual end-to-end checklist for the whole site.
+- Content review of the R books.
+- Acceptance: same responsive and keyboard checks as 3R, for the detail page; the checklist exists and passes.
+
+If 3I needs a change in a shared file owned by 3R (`css/base.css`, `css/tokens.css`), it asks R to make it rather than editing it.
+
+### Phase 4: Prototype release (joint)
+
+Depends on 3R and 3I. One branch, `phase-4-release`, worked on together.
+
+- `python tools/validate_books.py --strict` passes for all ten books.
+- Walk through `docs/TEST_CHECKLIST.md` in two browsers and on a phone.
+- Try the prototype with a few young people and record the feedback in this plan.
+- Decide on: hosting (GitHub Pages works without changes), cover permissions for a public site, and the next set of books and features.
+- Tag `v0.1.0` after the merge.
+
+## 8. Verification summary
+
+- Local server: `python -m http.server 8000`, then http://localhost:8000.
+- Data: `python tools/validate_books.py` (phase 1), with `--strict` from the end of phase 2.
+- Per phase: the acceptance checks in section 7.
+- Whole site: `docs/TEST_CHECKLIST.md` (from phase 3I).
