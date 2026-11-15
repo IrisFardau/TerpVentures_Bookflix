@@ -1,28 +1,35 @@
-/* Design tokens: dark streaming theme. */
+/* Design tokens: dark media-library theme (charcoal surfaces, blue accent,
+   purple-to-blue brand gradient), inspired by self-hosted media players such as Jellyfin. */
 :root {
   color-scheme: dark;
 
   /* Colours */
-  --color-bg: #0b0b0f;
-  --color-surface: #16161d;
-  --color-surface-raised: #22222b;
-  --color-border: #2e2e38;
-  --color-text: #f2f2f5;
-  --color-text-muted: #a7a7b3;
-  --color-accent: #e50914;
-  --color-accent-hover: #f6121d;
+  --color-bg: #101010;
+  --color-surface: #1c1c1c;
+  --color-surface-raised: #262626;
+  --color-surface-hover: #303030;
+  --color-border: #2e2e2e;
+  --color-text: #f0f0f0;
+  --color-text-muted: #a6a6a6;
+  --color-accent: #00a4dc;
+  --color-accent-hover: #1bb4ea;
+  --color-accent-soft: rgba(0, 164, 220, 0.16);
+  --color-accent-secondary: #aa5cc3;
   --color-on-accent: #ffffff;
-  --color-focus: #ffd166;
+  --color-focus: #00a4dc;
+  --gradient-brand: linear-gradient(135deg, var(--color-accent-secondary), var(--color-accent));
+  --color-header-bg: rgba(16, 16, 16, 0.8);
 
   /* Typography */
-  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-sans: "Noto Sans", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-size-sm: 0.875rem;
   --font-size-base: 1rem;
   --font-size-lg: 1.25rem;
-  --font-size-xl: 1.75rem;
-  --font-size-2xl: 2.5rem;
+  --font-size-xl: 1.5rem;
+  --font-size-2xl: 2.25rem;
   --line-height: 1.5;
-  --font-weight-bold: 700;
+  --font-weight-medium: 500;
+  --font-weight-bold: 600;
 
   /* Spacing */
   --space-1: 0.25rem;
@@ -34,11 +41,13 @@
   --space-12: 3rem;
 
   /* Shape and layout */
-  --radius-sm: 4px;
-  --radius-md: 8px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-pill: 999px;
+  --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.45);
   --header-height: 4rem;
-  --content-max-width: 1400px;
-  --gutter: clamp(1rem, 4vw, 3rem);
+  --content-max-width: 1600px;
+  --gutter: clamp(1rem, 3.5vw, 3rem);
 
   /* Motion */
   --transition-fast: 150ms ease-out;

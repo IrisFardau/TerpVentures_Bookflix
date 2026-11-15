@@ -13,7 +13,20 @@
 
   <header class="site-header">
     <div class="container site-header__inner">
-      <a class="site-logo" href="index.html">Bookflix</a>
+      <a class="site-logo" href="index.html">
+        <svg class="site-logo__mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+          <defs>
+            <linearGradient id="logo-gradient" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#aa5cc3"/>
+              <stop offset="1" stop-color="#00a4dc"/>
+            </linearGradient>
+          </defs>
+          <rect width="32" height="32" rx="8" fill="url(#logo-gradient)"/>
+          <path d="M16 10.5c-2.2-1.5-5-2-7.5-1.6v12.3c2.5-.4 5.3.1 7.5 1.6 2.2-1.5 5-2 7.5-1.6V8.9c-2.5-.4-5.3.1-7.5 1.6Z" fill="#fff"/>
+          <path d="M16 10.5v12.3" stroke="#5f86d0" stroke-width="1.4"/>
+        </svg>
+        <span>Bookflix</span>
+      </a>
       <nav class="site-nav" aria-label="Hoofdmenu">
         <ul>
           <li><a href="index.html">Home</a></li>
@@ -41,9 +54,17 @@
   <script type="module">
     import { loadAllBooks, loadBook } from './js/data.js';
 
-    const id = new URLSearchParams(window.location.search).get('id');
-    if (id) {
-      loadBook(id).then((book) => console.info('[detail] Book:', book));
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('id')) {
+      // An empty or malformed id goes to loadBook too, so it is reported instead of hidden.
+      const id = params.get('id');
+      loadBook(id).then((book) => {
+        if (book) {
+          console.info('[detail] Book:', book);
+        } else {
+          console.warn(`[detail] No book found for id ${JSON.stringify(id)}`);
+        }
+      });
     } else {
       loadAllBooks().catch((error) => console.error('[detail] Could not load the catalogue:', error));
     }

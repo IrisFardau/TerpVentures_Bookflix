@@ -47,7 +47,7 @@ Then open http://localhost:8000. Opening the HTML files directly from disk does 
 ```
 index.html                 home page (hero + carousels)
 boek.html                  detail page, opened as boek.html?id=<book-id>
-css/tokens.css             colours, type scale, spacing (dark streaming theme)
+css/tokens.css             colours, type scale, spacing (dark media-library theme)
 css/base.css               reset, header, footer, shared components
 css/home.css               hero and carousels
 css/detail.css             detail page
@@ -162,7 +162,8 @@ Both streams depend only on this plan and can start immediately.
 - Acceptance: both pages load on localhost with header and footer; the browser console lists the loaded R books and warns about the five I books not yet present.
 
 *1R notes (decisions and deviations):*
-- Header and footer markup is duplicated as static HTML in `index.html` and `boek.html`. With no build step there are no includes, and static markup works without JavaScript. Keep the two copies in sync.
+- Header and footer markup is duplicated as static HTML in `index.html` and `boek.html`. With no build step there are no includes, and static markup works without JavaScript. Keep the copies in sync; `python tools/check_shell.py` reports any page whose header or footer differs (apart from `aria-current`).
+- Visual style: the first theme (near-black with a red accent) looked too much like Netflix. It was replaced with a theme inspired by the Jellyfin media player: charcoal surfaces (`#101010` to `#303030`), blue accent `#00a4dc`, a purple-to-blue brand gradient (`#aa5cc3` to `#00a4dc`) used only for the logo mark and the placeholder cover, a translucent blurred header with tab-style navigation (accent underline on the current page), rounded corners, and `.section-title` for row headings. The logo is an original open-book mark, not Jellyfin's. Phase 2 and 3 styles should use the tokens in `css/tokens.css` rather than new colours.
 - Both pages have a small inline module script that calls `js/data.js` and logs to the console. Phase 2 replaces it with `js/home.js` and `js/detail.js`.
 - `js/data.js` also rejects ids that don't match `^[a-z0-9]+(-[a-z0-9]+)*$` before fetching, and checks the required (non-strict) fields. Results are cached per id. `loadAllBooks()` returns a `Map<id, book>` in catalogue order. `loadCatalog()` throws when the catalogue can't load, because no page works without it.
 - `data/catalog.json`: the featured book is `de-hongerspelen`. Rows: "Bekend van Netflix", "Van boek naar film", "Fantasy", "Series om te bingen".
