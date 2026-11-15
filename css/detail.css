@@ -1,0 +1,213 @@
+/* Detail page boek.html. Requires tokens.css and base.css. */
+
+.detail-loading {
+  color: var(--color-text-muted);
+}
+
+.detail-back {
+  display: inline-block;
+  margin-bottom: var(--space-6);
+  color: var(--color-text-muted);
+  font-weight: var(--font-weight-medium);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.detail-back:hover {
+  color: var(--color-text);
+}
+
+/* Layout */
+
+.detail {
+  position: relative;
+  isolation: isolate;
+}
+
+/* Blurred cover behind the top of the page, fading into the background. */
+.detail--has-backdrop::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: calc(-1 * var(--space-12)) calc(-1 * var(--gutter)) auto;
+  height: 32rem;
+  background-image: var(--detail-backdrop);
+  background-position: center 30%;
+  background-size: cover;
+  filter: blur(48px) saturate(1.2);
+  opacity: 0.28;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 20%, #000 40%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 20%, #000 40%, transparent);
+  pointer-events: none;
+}
+
+.detail-header {
+  display: grid;
+  gap: var(--space-8);
+  align-items: start;
+}
+
+@media (min-width: 48rem) {
+  .detail-header {
+    grid-template-columns: minmax(12rem, 18rem) minmax(0, 1fr);
+    gap: var(--space-12);
+  }
+}
+
+.detail-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  max-width: 46rem;
+}
+
+.detail-body {
+  display: grid;
+  gap: var(--space-8);
+  max-width: 64rem;
+  margin-top: var(--space-12);
+}
+
+/* Cover: the shared .cover from base.css (createCover in js/dom.js), sized for this page. */
+
+.detail-cover {
+  width: min(100%, 15rem);
+  margin-inline: auto;
+  /* Larger than the cards, so slightly rounder corners. */
+  border-radius: var(--radius-md);
+}
+
+@media (min-width: 48rem) {
+  .detail-cover {
+    width: 100%;
+  }
+}
+
+/* Heading block: the badge is the shared .badge from base.css. */
+
+.detail-note {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.detail-title {
+  font-size: clamp(var(--font-size-xl), 4vw, 2.75rem);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  overflow-wrap: anywhere;
+}
+
+.detail-subtitle {
+  margin-top: calc(-1 * var(--space-2));
+  color: var(--color-text-muted);
+  font-size: var(--font-size-lg);
+}
+
+.detail-author {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-medium);
+}
+
+.detail-teaser {
+  margin-top: var(--space-2);
+  font-size: var(--font-size-lg);
+  line-height: 1.6;
+}
+
+.detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+/* Tags: genres and content warnings */
+
+.detail-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding: 0;
+  list-style: none;
+}
+
+.detail-tag {
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.detail-tag--warning {
+  border-color: transparent;
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+}
+
+/* "Wat biedt het boek extra?" */
+
+.detail-extra {
+  padding: var(--space-6);
+  border-left: 4px solid var(--color-accent);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.detail-extra__text {
+  font-size: var(--font-size-lg);
+  line-height: 1.6;
+}
+
+/* Content warnings */
+
+.detail-warnings__title {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+}
+
+.detail-warnings__intro {
+  margin-block: var(--space-1) var(--space-3);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+/* Facts */
+
+.detail-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+  /* Every row as tall as the tallest, so all boxes have the same size. */
+  grid-auto-rows: 1fr;
+  gap: var(--space-3);
+}
+
+.detail-facts__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.detail-facts__term {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.detail-facts__value {
+  font-weight: var(--font-weight-medium);
+  overflow-wrap: anywhere;
+}
+
+/* Not found */
+
+.detail-empty {
+  max-width: 40rem;
+  padding-block: var(--space-12);
+}
