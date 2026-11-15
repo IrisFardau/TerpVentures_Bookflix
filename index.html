@@ -7,6 +7,7 @@
   <meta name="description" content="Ken je de film of serie al? Ontdek het boek erachter op Bookflix.">
   <link rel="stylesheet" href="css/tokens.css">
   <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/home.css">
 </head>
 <body>
   <a class="skip-link" href="#inhoud">Naar inhoud</a>
@@ -35,11 +36,16 @@
     </div>
   </header>
 
-  <main id="inhoud" class="site-main" tabindex="-1">
+  <main id="inhoud" class="site-main home" tabindex="-1">
+    <h1 class="visually-hidden">Bookflix: van scherm naar boek</h1>
+    <div id="hero"></div>
     <div class="container">
-      <h1 class="page-title">Van scherm naar boek</h1>
-      <p class="lead">Binnenkort: boeken die je kent van film en serie.</p>
+      <p id="home-status" class="home-status" role="status"></p>
+      <noscript>
+        <p class="home-status">Zet JavaScript aan om de boeken te zien.</p>
+      </noscript>
     </div>
+    <div id="rijen" class="container home-rows"></div>
   </main>
 
   <footer class="site-footer">
@@ -49,11 +55,6 @@
     </div>
   </footer>
 
-  <!-- Phase 1 smoke test of the data loader; replaced by js/home.js in phase 2. -->
-  <script type="module">
-    import { loadAllBooks } from './js/data.js';
-
-    loadAllBooks().catch((error) => console.error('[home] Could not load the catalogue:', error));
-  </script>
+  <script type="module" src="js/home.js"></script>
 </body>
 </html>

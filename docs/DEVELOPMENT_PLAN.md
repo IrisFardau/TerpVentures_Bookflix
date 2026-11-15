@@ -17,7 +17,7 @@ Each stream updates only its own rows.
 | 0 Plan | joint | `main` | none | Done |
 | 1R Site shell | R | `phase-1r-site-shell` | 0 | In review |
 | 1I Data tooling | I | `phase-1i-data-tooling` | 0 | In review |
-| 2R Home page and carousels | R | `phase-2r-home-carousels` | 1R, 1I | Not started |
+| 2R Home page and carousels | R | `phase-2r-home-carousels` | 1R, 1I | In review |
 | 2I Detail page | I | `phase-2i-detail-page` | 1R, 1I | Not started |
 | 3R Home page polish | R | `phase-3r-home-polish` | 2R, 2I | Not started |
 | 3I Detail page polish | I | `phase-3i-detail-polish` | 2R, 2I | Not started |
@@ -209,6 +209,20 @@ Both streams depend on 1R **and** 1I being merged: the UI needs the shell and da
 - UI: hero banner for the featured book (cover, title, `teaser`, button "Bekijk boek"); one carousel per catalogue row with cover and title per book; horizontal scrolling with arrow buttons, touch and keyboard; hover effect; each card links to `boek.html?id=<id>`; placeholder cover when an image is missing.
 - Content: review the `teaser` texts of the five R books against the content guide.
 - Acceptance: all rows render from `catalog.json`; arrows scroll; every card opens the right detail URL; `validate_books.py --strict` passes.
+
+*2R notes (decisions and deviations):*
+- Content: reviewed the `teaser` texts of the five short books against `docs/CONTENT_GUIDE.md`. All are within 30 to 60 words, follow the who / what changes / question shape and contain no spoilers. Fixed one sentence in *The Umbrella Academy*: "net als de wereld …" (which reads as "just like") became "precies op het moment dat de wereld dreigt te vergaan", and "tot superheldenteam" got its article.
+- `validate_books.py --strict` passes for all ten books with no errors or warnings.
+- Hero: blurred cover as backdrop, cover, badge "Bekend van de Netflix-serie (2022)", title, a line with author, pages, reading time and age, the teaser, and the button "Bekijk boek". If the featured book can't load, the hero is left out and the rows still render.
+- Cards show the book title plus the adaptation, for example "Film: Enola Holmes", because the film or series title is often what readers recognise.
+- Carousels: native horizontal scrolling (touch and trackpad work without extra code) with scroll snapping. The arrow buttons sit next to the row heading, as in media-library apps, and scroll about one screen. They are hidden when a row fits on screen and use `aria-disabled` at the ends, so keyboard focus is not lost. Each row is one Tab stop (roving tabindex); Left/Right arrow keys, Home and End move between the cards of a row, and a visually hidden hint tells screen-reader users so. Keys with Alt, Ctrl, Meta or Shift are left to the browser. Smooth scrolling is turned off with reduced motion.
+- `js/dom.js` holds the shared helpers `el`, `createCover` (2:3 cover with the placeholder and title on top when the image fails) and `detailUrl`, so 2I and 3I can use them without importing the carousel. `js/carousel.js` exports `createCarousel(title, books)`, which returns `{ element, destroy }`; call `destroy()` before discarding a row that may be rebuilt (for example "Meer zoals dit").
+- A row whose books all fail to load is skipped with a console warning. If the catalogue itself can't load, the page shows a Dutch error message.
+- Covers in the carousels use `loading="lazy"`; the hero cover loads eagerly.
+- README is not in the 2R file list, so it was left unchanged. It still describes the pages correctly; `js/home.js` and `js/carousel.js` can be added to its layout table in phase 4.
+- Tested in Edge (headless, real time) at 1200 px and 360 px wide: no horizontal page scroll, arrow states at both ends, keyboard navigation, all detail links, placeholder fallback, and with `prefers-reduced-motion`.
+- Code review: fixed the loading message showing without JavaScript, rendering errors leaving the page on "Boeken laden…", focus loss when the arrows hide on resize, a duplicated helper and a hard-coded colour. Not changed: a fallback label for unknown adaptation types (`js/data.js` already only accepts `film` and `serie`), and badge wording for platforms other than Netflix (the whole set is Netflix).
+- Second code review: modifier keys no longer blocked in rows, roving tabindex, `destroy()` for the carousel's observer and listeners, scroll updates batched per frame, no layout read before the row is in the DOM, `loadAllBooks(catalog)` takes the caller's catalogue, card labels derived from the adaptation type, shared helpers moved to `js/dom.js`, and two redundant hiding rules removed.
 
 **2I Detail page** (`phase-2i-detail-page`)
 - Files: `boek.html`, `css/detail.css`, `js/detail.js`.
