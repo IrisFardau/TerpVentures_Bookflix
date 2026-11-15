@@ -3,7 +3,6 @@
 import { loadBook } from './data.js';
 
 const PLACEHOLDER_COVER = 'assets/placeholder-cover.svg';
-const COVER_PATTERN = /^assets\/covers\/[a-z0-9-]+\.jpg$/;
 const SITE_NAME = 'Bookflix';
 
 const FORMAT_LABELS = { roman: 'Roman', 'graphic novel': 'Graphic novel' };
@@ -63,12 +62,9 @@ function buildCover(book) {
     caption.hidden = false;
     figure.classList.add('detail-cover--placeholder');
   };
+  // The same path as on the home page (createCover in js/dom.js), so both pages show the same cover.
   img.onerror = showPlaceholder;
-  if (COVER_PATTERN.test(book.cover)) {
-    img.src = book.cover;
-  } else {
-    showPlaceholder();
-  }
+  img.src = book.cover;
   figure.append(img, caption);
   return figure;
 }
@@ -139,13 +135,12 @@ function renderBook(root, book) {
   document.title = `${book.title} – ${SITE_NAME}`;
 
   const article = el('article', 'detail');
-  if (COVER_PATTERN.test(book.cover)) {
-    // Blurred cover behind the top of the page. The path is checked above, so it is safe in url().
-    // It is made absolute because url() in a custom property resolves against css/detail.css.
-    const coverUrl = new URL(book.cover, document.baseURI).href;
-    article.style.setProperty('--detail-backdrop', `url("${coverUrl}")`);
-    article.classList.add('detail--has-backdrop');
-  }
+  // Blurred cover behind the top of the page, as in the home page hero. The URL is made absolute
+  // because url() in a custom property resolves against css/detail.css, and quoted with
+  // JSON.stringify so any path is safe inside url().
+  const coverUrl = new URL(book.cover, document.baseURI).href;
+  article.style.setProperty('--detail-backdrop', `url(${JSON.stringify(coverUrl)})`);
+  article.classList.add('detail--has-backdrop');
 
   const header = el('div', 'detail-header');
   const info = el('div', 'detail-info');
