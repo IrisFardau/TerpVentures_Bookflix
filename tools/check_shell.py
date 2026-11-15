@@ -19,8 +19,8 @@ BLOCKS = {
 ARIA_CURRENT = re.compile(r'\s+aria-current="page"')
 
 
-def extract(path: Path, name: str) -> str | None:
-    match = BLOCKS[name].search(path.read_text(encoding="utf-8"))
+def extract(text: str, name: str) -> str | None:
+    match = BLOCKS[name].search(text)
     if not match:
         return None
     return ARIA_CURRENT.sub("", match.group(0))
@@ -32,16 +32,17 @@ def main() -> int:
         print("No HTML pages found.")
         return 1
 
+    texts = {page: page.read_text(encoding="utf-8") for page in pages}
     ok = True
     reference = pages[0]
     for name in BLOCKS:
-        expected = extract(reference, name)
+        expected = extract(texts[reference], name)
         if expected is None:
             print(f"{reference.name}: no {name} found")
             ok = False
             continue
         for page in pages[1:]:
-            actual = extract(page, name)
+            actual = extract(texts[page], name)
             if actual is None:
                 print(f"{page.name}: no {name} found")
                 ok = False

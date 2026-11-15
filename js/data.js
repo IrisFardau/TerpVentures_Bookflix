@@ -8,6 +8,7 @@ const ISBN_PATTERN = /^\d{13}$/;
 const ADAPTATION_TYPES = ['film', 'serie'];
 const FORMATS = ['roman', 'graphic novel'];
 const LENGTHS = ['kort', 'middel'];
+const LANGUAGES = ['Nederlands', 'Engels'];
 
 const bookCache = new Map();
 let catalogPromise = null;
@@ -69,6 +70,9 @@ function checkBook(book, id) {
   for (const field of ['year', 'pages', 'readingTimeMinutes']) {
     if (!Number.isInteger(book[field]) || book[field] <= 0) problems.push(`${field} must be a positive whole number`);
   }
+  if (isNonEmptyString(book.language) && !LANGUAGES.includes(book.language)) {
+    problems.push('language must be "Nederlands" or "Engels"');
+  }
   if (!FORMATS.includes(book.format)) problems.push('format must be "roman" or "graphic novel"');
   if (!LENGTHS.includes(book.length)) problems.push('length must be "kort" or "middel"');
   if (!isStringList(book.genres) || book.genres.length === 0) {
@@ -83,7 +87,9 @@ function checkBook(book, id) {
   } else {
     if (!ADAPTATION_TYPES.includes(adaptation.type)) problems.push('adaptation.type must be "film" or "serie"');
     if (!isNonEmptyString(adaptation.title)) problems.push('missing adaptation.title');
-    if (!Number.isInteger(adaptation.year)) problems.push('adaptation.year must be a number');
+    if (!Number.isInteger(adaptation.year) || adaptation.year <= 0) {
+      problems.push('adaptation.year must be a positive whole number');
+    }
     if (!isNonEmptyString(adaptation.platform)) problems.push('missing adaptation.platform');
     if (adaptation.note !== undefined && !isNonEmptyString(adaptation.note)) {
       problems.push('adaptation.note must be a string');
