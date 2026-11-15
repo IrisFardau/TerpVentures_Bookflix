@@ -210,7 +210,19 @@
 .detail-facts {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
-  gap: var(--space-4) var(--space-6);
+  /* Every row as tall as the tallest, so all boxes have the same size. */
+  grid-auto-rows: 1fr;
+  gap: var(--space-3);
+}
+
+.detail-facts__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
 }
 
 .detail-facts__term {
