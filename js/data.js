@@ -185,10 +185,12 @@ export function loadBook(id) {
 
 /**
  * Loads every book referenced by the catalogue (featured book and all rows).
+ * @param {object} [catalog] a catalogue the caller already loaded; pass it so the
+ *   caller's rows and the returned books are guaranteed to match. Loaded when omitted.
  * @returns {Promise<Map<string, object>>} loaded books by id, in catalogue order
  */
-export async function loadAllBooks() {
-  const catalog = await loadCatalog();
+export async function loadAllBooks(catalog) {
+  catalog ??= await loadCatalog();
   const ids = new Set([catalog.featured]);
   for (const row of catalog.rows) {
     for (const id of row.books) ids.add(id);
