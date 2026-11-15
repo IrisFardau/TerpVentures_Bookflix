@@ -211,7 +211,7 @@ Both streams depend on 1R **and** 1I being merged: the UI needs the shell and da
 - Acceptance: all rows render from `catalog.json`; arrows scroll; every card opens the right detail URL; `validate_books.py --strict` passes.
 
 *2R notes (decisions and deviations):*
-- Content: reviewed the `teaser` texts of the five short books against `docs/CONTENT_GUIDE.md`. All are within 30 to 60 words, follow the who / what changes / question shape and contain no spoilers. Fixed one sentence in *The Umbrella Academy*: "net als de wereld …" (which reads as "just like") became "precies op het moment dat de wereld dreigt te vergaan", and "tot superheldenteam" got its article.
+- Content: reviewed the `teaser` texts of the five short books against `docs/CONTENT_GUIDE.md`. All are within 15 to 60 words (30 to 60 at the time of the review), follow the who / what changes / question shape and contain no spoilers. Fixed one sentence in *The Umbrella Academy*: "net als de wereld …" (which reads as "just like") became "precies op het moment dat de wereld dreigt te vergaan", and "tot superheldenteam" got its article.
 - `validate_books.py --strict` passes for all ten books with no errors or warnings.
 - Hero: blurred cover as backdrop, cover, badge "Bekend van de Netflix-serie (2022)", title, a line with author, pages, reading time and age, the teaser, and the button "Bekijk boek". If the featured book can't load, the hero is left out and the rows still render.
 - Cards show the book title plus the adaptation, for example "Film: Enola Holmes", because the film or series title is often what readers recognise.
