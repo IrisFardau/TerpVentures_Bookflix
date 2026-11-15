@@ -69,12 +69,13 @@
   margin-top: var(--space-12);
 }
 
-/* Cover */
+/* Cover: the shared .cover from base.css (createCover in js/dom.js), sized for this page. */
 
 .detail-cover {
-  position: relative;
   width: min(100%, 15rem);
   margin-inline: auto;
+  /* Larger than the cards, so slightly rounder corners. */
+  border-radius: var(--radius-md);
 }
 
 @media (min-width: 48rem) {
@@ -83,38 +84,7 @@
   }
 }
 
-.detail-cover__image {
-  width: 100%;
-  height: auto;
-  aspect-ratio: 2 / 3;
-  object-fit: cover;
-  border-radius: var(--radius-md);
-  background: var(--color-surface);
-  box-shadow: var(--shadow-card);
-}
-
-.detail-cover__fallback-title {
-  position: absolute;
-  /* Above the book icon: the placeholder shows the logo at the bottom. */
-  inset: 12% var(--space-4) auto;
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-bold);
-  line-height: 1.25;
-  text-align: center;
-  overflow-wrap: anywhere;
-}
-
-/* Heading block */
-
-.detail-badge {
-  display: inline-block;
-  padding: var(--space-1) var(--space-3);
-  border-radius: var(--radius-pill);
-  background: var(--color-accent-soft);
-  color: var(--color-accent-hover);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-}
+/* Heading block: the badge is the shared .badge from base.css. */
 
 .detail-note {
   color: var(--color-text-muted);

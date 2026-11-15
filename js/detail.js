@@ -1,21 +1,13 @@
 // Builds the detail page boek.html?id=<book-id>. See phase 2I in docs/DEVELOPMENT_PLAN.md.
 
 import { loadBook } from './data.js';
+import { createCover, el } from './dom.js';
 
-const PLACEHOLDER_COVER = 'assets/placeholder-cover.svg';
 const SITE_NAME = 'Bookflix';
 
 const FORMAT_LABELS = { roman: 'Roman', 'graphic novel': 'Graphic novel' };
 const LENGTH_LABELS = { kort: 'Kort', middel: 'Middellang' };
 const ADAPTATION_LABELS = { film: 'film', serie: 'serie' };
-
-/** Creates an element with optional class and text. Text is never parsed as HTML. */
-function el(tag, className, text) {
-  const node = document.createElement(tag);
-  if (className) node.className = className;
-  if (text !== undefined) node.textContent = text;
-  return node;
-}
 
 /** 45 → "ca. 45 min", 120 → "ca. 2 uur", 135 → "ca. 2 uur en 15 min". */
 export function formatReadingTime(minutes) {
@@ -43,30 +35,6 @@ function isSafeUrl(url) {
   } catch {
     return false;
   }
-}
-
-function buildCover(book) {
-  const figure = el('figure', 'detail-cover');
-  const img = el('img', 'detail-cover__image');
-  img.alt = `Omslag van ${book.title}`;
-  img.width = 300;
-  img.height = 450;
-  img.decoding = 'async';
-  // When the image is missing, show the placeholder with the title on top (see 1R notes).
-  const caption = el('figcaption', 'detail-cover__fallback-title', book.title);
-  caption.hidden = true;
-  const showPlaceholder = () => {
-    img.onerror = null;
-    img.src = PLACEHOLDER_COVER;
-    img.alt = '';
-    caption.hidden = false;
-    figure.classList.add('detail-cover--placeholder');
-  };
-  // The same path as on the home page (createCover in js/dom.js), so both pages show the same cover.
-  img.onerror = showPlaceholder;
-  img.src = book.cover;
-  figure.append(img, caption);
-  return figure;
 }
 
 function buildFacts(book) {
@@ -145,7 +113,7 @@ function renderBook(root, book) {
   const header = el('div', 'detail-header');
   const info = el('div', 'detail-info');
 
-  const badge = el('p', 'detail-badge', adaptationLabel(book.adaptation));
+  const badge = el('p', 'badge', adaptationLabel(book.adaptation));
   info.append(badge);
   if (book.adaptation.note) info.append(el('p', 'detail-note', book.adaptation.note));
 
@@ -159,7 +127,9 @@ function renderBook(root, book) {
   const actions = buildLinks(book.links);
   if (actions) info.append(actions);
 
-  header.append(buildCover(book), info);
+  // The shared cover from js/dom.js, so the detail page and the home page show the same cover
+  // and the same placeholder.
+  header.append(createCover(book, { className: 'detail-cover', loading: 'eager' }), info);
 
   const body = el('div', 'detail-body');
   const extra = el('section', 'detail-extra');
