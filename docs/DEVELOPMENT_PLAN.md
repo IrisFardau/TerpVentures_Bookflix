@@ -120,10 +120,12 @@ This contract is the interface between the two streams. Changing it requires agr
 
 ## 5. Open questions and how they are handled
 
-**Book covers.** `tools/fetch_covers.py` downloads each cover once by ISBN and stores it in `assets/covers/`, so the site never depends on an external service at runtime. Sources, in order:
-1. Open Library Covers API: `https://covers.openlibrary.org/b/isbn/<isbn>-L.jpg?default=false`
-2. Google Books API: `https://www.googleapis.com/books/v1/volumes?q=isbn:<isbn>` (`imageLinks`)
-3. No result: the site shows `assets/placeholder-cover.svg` with the title on it, and the cover is added by hand.
+**Book covers.** `tools/fetch_covers.py` downloads each cover once and stores it in `assets/covers/<id>.jpg`, so the site never depends on an external service at runtime. Sources, in order:
+1. bibliotheek.nl: the cover shown on the book's title page (the `links` entry for bibliotheek.nl). These images are signed, short-lived URLs on `leibniz.zbkb.nl`, which is why they are downloaded rather than linked.
+2. Open Library Covers API: `https://covers.openlibrary.org/b/isbn/<isbn>-L.jpg?default=false` (redirects to archive.org).
+3. No result: the script lists the book, the site shows `assets/placeholder-cover.svg`, and the cover is added by hand.
+
+Run `python tools/fetch_covers.py` for missing covers, `--force` to download all again, or pass book ids to limit it. The network must allow `www.bibliotheek.nl` and `leibniz.zbkb.nl` (and `covers.openlibrary.org` plus `archive.org` for the fallback).
 
 Covers are copyrighted. Using them in a local prototype is low risk, but permission and source must be checked before the site goes public (phase 4 decision).
 
