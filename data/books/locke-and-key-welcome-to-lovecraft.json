@@ -1,0 +1,33 @@
+{
+  "id": "locke-and-key-welcome-to-lovecraft",
+  "title": "Locke & Key: Welcome to Lovecraft",
+  "series": "Locke & Key, deel 1",
+  "author": "Joe Hill & Gabriel Rodríguez",
+  "isbn": "9781600102370",
+  "cover": "https://covers.openlibrary.org/b/isbn/9781600102370-L.jpg",
+  "format": "graphic novel",
+  "genres": [
+    "Graphic novel",
+    "Horror",
+    "Fantasy"
+  ],
+  "pages": 152,
+  "length": "kort",
+  "readingTimeMinutes": 75,
+  "age": "15+",
+  "contentWarnings": [
+    "moord",
+    "geweld",
+    "bloed",
+    "rouw"
+  ],
+  "adaptation": {
+    "type": "serie",
+    "title": "Locke & Key",
+    "year": 2020,
+    "platform": "Netflix"
+  },
+  "teaser": "Na een gruwelijke gebeurtenis verhuizen Tyler, Kinsey en Bode Locke met hun moeder naar het oude familiehuis Keyhouse. Daar vindt de jongste sleutels met magische krachten. Maar in de put van het huis wacht iemand die die sleutels ook heel graag wil hebben.",
+  "extraTeaser": "De serie is een toegankelijk avonturenverhaal, de comic is echte horror: donkerder, spannender en met tekeningen die je niet snel vergeet. Wie de serie al kent, ontdekt hier een veel grimmiger versie van Keyhouse.",
+  "links": []
+}

@@ -1,0 +1,32 @@
+{
+  "id": "arsene-lupin-gentleman-thief",
+  "title": "Arsène Lupin, Gentleman-Thief",
+  "originalTitle": "Arsène Lupin, gentleman-cambrioleur",
+  "author": "Maurice Leblanc",
+  "isbn": "9780143104865",
+  "cover": "https://covers.openlibrary.org/b/isbn/9780143104865-L.jpg",
+  "format": "roman",
+  "genres": [
+    "Misdaad",
+    "Avontuur",
+    "Klassieker"
+  ],
+  "pages": 240,
+  "length": "middel",
+  "readingTimeMinutes": 240,
+  "age": "12+",
+  "contentWarnings": [
+    "diefstal",
+    "lichte spanning"
+  ],
+  "adaptation": {
+    "type": "serie",
+    "title": "Lupin",
+    "year": 2021,
+    "platform": "Netflix",
+    "note": "De serie is geïnspireerd op het boek, niet een verfilming ervan."
+  },
+  "teaser": "Arsène Lupin is de charmantste dief van Parijs: hij steelt alleen van rijke mensen, kondigt zijn inbraken soms van tevoren aan en ontsnapt telkens net op tijd. De politie is hem altijd een stap achter. Elk hoofdstuk is een nieuwe kraak, en een nieuwe verrassing.",
+  "extraTeaser": "In de serie is Assane gefascineerd door dit boek, en nu kun je zelf lezen waarom. Je ontmoet de echte Lupin, met de trucs en vermommingen die Assane kopieert. Bonus: de korte verhalen lezen als losse afleveringen, ideaal om tussendoor te lezen.",
+  "links": []
+}

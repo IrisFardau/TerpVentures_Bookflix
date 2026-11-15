@@ -1,0 +1,32 @@
+{
+  "id": "sweet-tooth-out-of-the-deep-woods",
+  "title": "Sweet Tooth: Out of the Deep Woods",
+  "series": "Sweet Tooth, deel 1",
+  "author": "Jeff Lemire",
+  "isbn": "9781401226961",
+  "cover": "https://covers.openlibrary.org/b/isbn/9781401226961-L.jpg",
+  "format": "graphic novel",
+  "genres": [
+    "Graphic novel",
+    "Dystopie",
+    "Avontuur"
+  ],
+  "pages": 128,
+  "length": "kort",
+  "readingTimeMinutes": 60,
+  "age": "14+",
+  "contentWarnings": [
+    "geweld",
+    "dood",
+    "pandemie"
+  ],
+  "adaptation": {
+    "type": "serie",
+    "title": "Sweet Tooth",
+    "year": 2021,
+    "platform": "Netflix"
+  },
+  "teaser": "Na een mysterieuze ziekte die de wereld heeft verwoest, worden er alleen nog kinderen geboren die half mens, half dier zijn. Gus, een jongen met een hertengewei, groeit verborgen op in het bos. Tot een zwijgzame vreemdeling hem meeneemt naar de buitenwereld.",
+  "extraTeaser": "Waar de serie vaak hoopvol en sprookjesachtig is, is de comic rauwer en spannender. De ruwe tekenstijl en de stille pagina's zonder tekst laten je zelf invullen wat er gebeurt. Je ziet de wereld van Gus zoals de maker hem bedoeld heeft.",
+  "links": []
+}

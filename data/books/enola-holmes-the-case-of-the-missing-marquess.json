@@ -1,0 +1,31 @@
+{
+  "id": "enola-holmes-the-case-of-the-missing-marquess",
+  "title": "The Case of the Missing Marquess",
+  "series": "Enola Holmes, deel 1",
+  "author": "Nancy Springer",
+  "isbn": "9780142409336",
+  "cover": "https://covers.openlibrary.org/b/isbn/9780142409336-L.jpg",
+  "format": "roman",
+  "genres": [
+    "Detective",
+    "Historisch",
+    "Avontuur"
+  ],
+  "pages": 216,
+  "length": "middel",
+  "readingTimeMinutes": 210,
+  "age": "12+",
+  "contentWarnings": [
+    "vermissing",
+    "lichte spanning en geweld"
+  ],
+  "adaptation": {
+    "type": "film",
+    "title": "Enola Holmes",
+    "year": 2020,
+    "platform": "Netflix"
+  },
+  "teaser": "Op haar veertiende verjaardag is de moeder van Enola Holmes ineens verdwenen. Haar beroemde broers Sherlock en Mycroft willen haar naar een strenge kostschool sturen. Enola heeft andere plannen: ze vlucht naar Londen om haar moeder zelf te vinden, en stuit onderweg op een tweede raadsel.",
+  "extraTeaser": "In het boek zit je helemaal in het hoofd van Enola: haar slimme vermommingen, de geheime codes die ze moet kraken en wat ze echt denkt van haar broers. Je puzzelt zelf mee, en je ziet het Londen van 1888 veel donkerder dan in de film.",
+  "links": []
+}

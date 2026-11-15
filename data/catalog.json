@@ -1,0 +1,49 @@
+{
+  "featured": "heartstopper-1",
+  "rows": [
+    {
+      "title": "Bekend van Netflix",
+      "books": [
+        "the-bad-beginning",
+        "the-little-prince",
+        "the-umbrella-academy-apocalypse-suite",
+        "sweet-tooth-out-of-the-deep-woods",
+        "locke-and-key-welcome-to-lovecraft",
+        "enola-holmes-the-case-of-the-missing-marquess",
+        "matilda",
+        "heartstopper-1",
+        "thirteen-reasons-why",
+        "arsene-lupin-gentleman-thief"
+      ]
+    },
+    {
+      "title": "Kort & krachtig (tot 200 pagina's)",
+      "books": [
+        "the-bad-beginning",
+        "the-little-prince",
+        "the-umbrella-academy-apocalypse-suite",
+        "sweet-tooth-out-of-the-deep-woods",
+        "locke-and-key-welcome-to-lovecraft"
+      ]
+    },
+    {
+      "title": "Lekker doorlezen (200 tot 350 pagina's)",
+      "books": [
+        "enola-holmes-the-case-of-the-missing-marquess",
+        "matilda",
+        "heartstopper-1",
+        "thirteen-reasons-why",
+        "arsene-lupin-gentleman-thief"
+      ]
+    },
+    {
+      "title": "Graphic novels",
+      "books": [
+        "the-umbrella-academy-apocalypse-suite",
+        "sweet-tooth-out-of-the-deep-woods",
+        "locke-and-key-welcome-to-lovecraft",
+        "heartstopper-1"
+      ]
+    }
+  ]
+}

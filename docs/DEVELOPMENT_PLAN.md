@@ -79,22 +79,27 @@ This contract is the interface between the two streams. Changing it requires agr
 | Field | Type | Required | Notes |
 |---|---|---|---|
 | `id` | string | yes | Same as the filename, lowercase with hyphens |
-| `title` | string | yes | Dutch title |
+| `title` | string | yes | Title of the edition the ISBN belongs to |
+| `originalTitle` | string | no | Only when the edition title is a translation |
+| `series` | string | no | Dutch, for example "Heartstopper, deel 1" |
 | `author` | string | yes | |
-| `isbn` | string | yes | ISBN-13 of a Dutch edition, digits only |
-| `cover` | string | strict | Path such as `assets/covers/<id>.jpg` |
+| `isbn` | string | yes | ISBN-13, digits only. Used for the cover |
+| `cover` | string | yes | Open Library Covers URL: `https://covers.openlibrary.org/b/isbn/<isbn>-L.jpg` |
+| `format` | `"roman"` or `"graphic novel"` | yes | |
+| `genres` | string[] | yes | Dutch genre names, used for carousel rows |
+| `pages` | number | yes | Max 350 |
+| `length` | `"kort"` or `"middel"` | yes | `kort` under 200 pages, `middel` 200 to 350 |
+| `readingTimeMinutes` | number | yes | Estimate: 1 min per page (roman), 0.5 min per page (graphic novel), rounded to 15 |
+| `age` | string | yes | For example "12+" |
+| `contentWarnings` | string[] | yes | Dutch, lowercase. Empty array when none |
 | `adaptation.type` | `"film"` or `"serie"` | yes | |
 | `adaptation.title` | string | yes | Title of the film or series as known in the Netherlands |
 | `adaptation.year` | number | yes | |
-| `adaptation.platform` | string | no | For example "Netflix" |
-| `genres` | string[] | yes | Dutch genre names, used for carousel rows |
-| `age` | string | no | For example "12+" |
-| `tagline` | string | strict | One sentence, max 120 characters, shown in the hero and on hover |
-| `description` | string | strict | Spoiler-free, 60 to 120 words |
-| `extras` | string[] | strict | 2 to 4 short points: what the book offers beyond the film or series |
-| `libraryUrl` | string | strict | Link to the book on bibliotheek.nl |
-
-"strict" fields may be missing during phase 1 and are required from the end of phase 2 (`validate_books.py --strict`).
+| `adaptation.platform` | string | yes | "Netflix" for this set |
+| `adaptation.note` | string | no | For example when the adaptation is only inspired by the book |
+| `teaser` | string | yes | Dutch, spoiler-free, what the book is about (40 to 70 words) |
+| `extraTeaser` | string | yes | Dutch, spoiler-free, what the book offers beyond the film or series (40 to 70 words) |
+| `links` | object[] | yes | Where to get the book. Empty for now; planned shape `{ "label": "Bibliotheek", "url": "https://..." }` |
 
 `data/catalog.json`:
 
@@ -120,20 +125,22 @@ Covers are copyrighted. Using them in a local prototype is low risk, but permiss
 
 **bibliotheek.nl links.** `libraryUrl` is stored per book as a complete URL, looked up by hand. Stream I documents in `docs/CONTENT_GUIDE.md` (phase 1I) which URL form is stable: preferably the title page of the book, otherwise a catalogue search on ISBN.
 
-**The 10 books.** Proposal below. Dutch titles, ISBNs and adaptation details are verified in phase 1 by the owner; swapping a book is allowed if this table is updated.
+**The 10 books.** All based on a Netflix film or series, for readers 12 to 18, half short (under 200 pages) and half medium (200 to 350 pages). ISBNs are English-language editions because Open Library has covers for those; Dutch editions can be added later.
 
-| Book id | Book | Adaptation | Content owner |
+| Book id | Book | Pages | Adaptation (Netflix) |
 |---|---|---|---|
-| `harry-potter-steen-der-wijzen` | Harry Potter en de Steen der Wijzen, J.K. Rowling | Film | R |
-| `de-hongerspelen` | De Hongerspelen, Suzanne Collins | Film | R |
-| `heartstopper-1` | Heartstopper deel 1, Alice Oseman | Series (Netflix) | R |
-| `oorlogswinter` | Oorlogswinter, Jan Terlouw | Film | R |
-| `duin` | Duin, Frank Herbert | Film | R |
-| `percy-jackson-bliksemdief` | Percy Jackson en de bliksemdief, Rick Riordan | Series (Disney+) | I |
-| `wonder` | Wonder, R.J. Palacio | Film | I |
-| `the-hate-u-give` | The Hate U Give, Angie Thomas | Film | I |
-| `de-zomer-dat-ik-mooi-werd` | The Summer I Turned Pretty (Dutch edition), Jenny Han | Series (Prime Video) | I |
-| `schim-en-schaduw` | Shadow and Bone (Dutch edition), Leigh Bardugo | Series (Netflix) | I |
+| `the-little-prince` | The Little Prince, Antoine de Saint-Exupéry | 96 | Film, 2015 |
+| `sweet-tooth-out-of-the-deep-woods` | Sweet Tooth 1, Jeff Lemire | 128 | Series, 2021 |
+| `locke-and-key-welcome-to-lovecraft` | Locke & Key 1, Joe Hill & Gabriel Rodríguez | 152 | Series, 2020 |
+| `the-bad-beginning` | The Bad Beginning, Lemony Snicket | 162 | Series, 2017 |
+| `the-umbrella-academy-apocalypse-suite` | The Umbrella Academy 1, Gerard Way & Gabriel Bá | 184 | Series, 2019 |
+| `enola-holmes-the-case-of-the-missing-marquess` | The Case of the Missing Marquess, Nancy Springer | 216 | Film, 2020 |
+| `matilda` | Matilda, Roald Dahl | 240 | Film, 2022 |
+| `arsene-lupin-gentleman-thief` | Arsène Lupin, Gentleman-Thief, Maurice Leblanc | 240 | Series, 2021 (inspired by) |
+| `heartstopper-1` | Heartstopper: Volume One, Alice Oseman | 288 | Series, 2022 |
+| `thirteen-reasons-why` | Thirteen Reasons Why, Jay Asher | 288 | Series, 2017 |
+
+Page counts, ISBNs and covers still need a check against Open Library in phase 1.
 
 ## 6. Workflow for every phase
 

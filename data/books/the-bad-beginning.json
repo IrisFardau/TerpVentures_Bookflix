@@ -1,0 +1,32 @@
+{
+  "id": "the-bad-beginning",
+  "title": "The Bad Beginning",
+  "series": "A Series of Unfortunate Events, deel 1",
+  "author": "Lemony Snicket",
+  "isbn": "9780064407663",
+  "cover": "https://covers.openlibrary.org/b/isbn/9780064407663-L.jpg",
+  "format": "roman",
+  "genres": [
+    "Avontuur",
+    "Humor",
+    "Mysterie"
+  ],
+  "pages": 162,
+  "length": "kort",
+  "readingTimeMinutes": 165,
+  "age": "10+",
+  "contentWarnings": [
+    "dood van ouders",
+    "kindermishandeling",
+    "bedreiging"
+  ],
+  "adaptation": {
+    "type": "serie",
+    "title": "A Series of Unfortunate Events",
+    "year": 2017,
+    "platform": "Netflix"
+  },
+  "teaser": "Violet, Klaus en Sunny Baudelaire verliezen alles op één dag en belanden bij graaf Olaf, een 'familielid' dat alleen maar uit is op hun fortuin. Drie slimme kinderen tegen één heel gemene volwassene: wie is het slimst?",
+  "extraTeaser": "De verteller praat je de hele tijd rechtstreeks aan, waarschuwt je dat je dit boek beter níet kunt lezen en legt moeilijke woorden uit op de grappigste manieren. Die droge, duistere humor komt op papier nog harder binnen dan op het scherm.",
+  "links": []
+}

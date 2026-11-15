@@ -1,0 +1,32 @@
+{
+  "id": "thirteen-reasons-why",
+  "title": "Thirteen Reasons Why",
+  "author": "Jay Asher",
+  "isbn": "9781595141712",
+  "cover": "https://covers.openlibrary.org/b/isbn/9781595141712-L.jpg",
+  "format": "roman",
+  "genres": [
+    "Drama",
+    "Mysterie",
+    "Realistisch"
+  ],
+  "pages": 288,
+  "length": "middel",
+  "readingTimeMinutes": 285,
+  "age": "15+",
+  "contentWarnings": [
+    "zelfdoding",
+    "seksueel geweld",
+    "pesten",
+    "alcohol"
+  ],
+  "adaptation": {
+    "type": "serie",
+    "title": "13 Reasons Why",
+    "year": 2017,
+    "platform": "Netflix"
+  },
+  "teaser": "Clay Jensen vindt een pakketje met cassettebandjes voor zijn deur. Ze zijn ingesproken door Hannah Baker, een klasgenoot die er niet meer is. Op de bandjes vertelt ze over dertien redenen. Eén ervan gaat over Clay.",
+  "extraTeaser": "Het boek speelt zich af in één nacht en is veel compacter dan de serie: je hoort Hannahs stem en Clays gedachten bijna tegelijk, wat het intens en snel maakt. Het verhaal blijft dichter bij die twee, zonder de extra verhaallijnen van de serie.",
+  "links": []
+}
