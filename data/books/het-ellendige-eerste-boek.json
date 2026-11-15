@@ -1,0 +1,41 @@
+{
+  "id": "het-ellendige-eerste-boek",
+  "title": "Het ellendige eerste boek",
+  "originalTitle": "The Bad Beginning",
+  "series": "Lemony Snickets afschuwelijke avonturen, deel 1",
+  "author": "Lemony Snicket",
+  "isbn": "9789401444637",
+  "publisher": "Lannoo",
+  "year": 2017,
+  "language": "Nederlands",
+  "cover": "assets/covers/het-ellendige-eerste-boek.jpg",
+  "format": "roman",
+  "genres": [
+    "Avontuur",
+    "Humor",
+    "Mysterie"
+  ],
+  "pages": 151,
+  "length": "kort",
+  "readingTimeMinutes": 150,
+  "age": "11+",
+  "contentWarnings": [
+    "dood van ouders",
+    "kindermishandeling",
+    "bedreiging"
+  ],
+  "adaptation": {
+    "type": "serie",
+    "title": "A Series of Unfortunate Events",
+    "year": 2017,
+    "platform": "Netflix"
+  },
+  "teaser": "Violet, Claus en Roosje Baudelaire verliezen alles op één dag en belanden bij graaf Olaf, een 'familielid' dat alleen maar uit is op hun fortuin. Drie slimme kinderen tegen één heel gemene volwassene: wie is het slimst?",
+  "extraTeaser": "De verteller praat je de hele tijd rechtstreeks aan, waarschuwt je dat je dit boek beter níet kunt lezen en legt moeilijke woorden uit op de grappigste manieren. Die droge, duistere humor komt op papier nog harder binnen dan op het scherm.",
+  "links": [
+    {
+      "label": "Bibliotheek",
+      "url": "https://www.bibliotheek.nl/catalogus/titel.410848883.html"
+    }
+  ]
+}

@@ -79,22 +79,31 @@ This contract is the interface between the two streams. Changing it requires agr
 | Field | Type | Required | Notes |
 |---|---|---|---|
 | `id` | string | yes | Same as the filename, lowercase with hyphens |
-| `title` | string | yes | Dutch title |
+| `title` | string | yes | Title of the edition the ISBN belongs to, as listed on bibliotheek.nl |
+| `subtitle` | string | no | |
+| `originalTitle` | string | no | Only when the edition title is a translation |
+| `series` | string | no | Dutch, for example "Heartstopper, deel 1" |
 | `author` | string | yes | |
-| `isbn` | string | yes | ISBN-13 of a Dutch edition, digits only |
-| `cover` | string | strict | Path such as `assets/covers/<id>.jpg` |
+| `isbn` | string | yes | ISBN-13, digits only, from bibliotheek.nl. Dutch edition where one exists |
+| `publisher` | string | yes | |
+| `year` | number | yes | Year of this edition |
+| `language` | string | yes | "Nederlands" or "Engels" |
+| `cover` | string | yes | Local path `assets/covers/<id>.jpg`, downloaded from the bibliotheek.nl catalogue |
+| `format` | `"roman"` or `"graphic novel"` | yes | |
+| `genres` | string[] | yes | Dutch genre names, used for carousel rows |
+| `pages` | number | yes | Max 350 |
+| `length` | `"kort"` or `"middel"` | yes | `kort` under 200 pages, `middel` 200 to 350 |
+| `readingTimeMinutes` | number | yes | Estimate: 1 min per page (roman), 0.5 min per page (graphic novel), rounded to 15 |
+| `age` | string | yes | For example "12+" |
+| `contentWarnings` | string[] | yes | Dutch, lowercase. Empty array when none |
 | `adaptation.type` | `"film"` or `"serie"` | yes | |
 | `adaptation.title` | string | yes | Title of the film or series as known in the Netherlands |
 | `adaptation.year` | number | yes | |
-| `adaptation.platform` | string | no | For example "Netflix" |
-| `genres` | string[] | yes | Dutch genre names, used for carousel rows |
-| `age` | string | no | For example "12+" |
-| `tagline` | string | strict | One sentence, max 120 characters, shown in the hero and on hover |
-| `description` | string | strict | Spoiler-free, 60 to 120 words |
-| `extras` | string[] | strict | 2 to 4 short points: what the book offers beyond the film or series |
-| `libraryUrl` | string | strict | Link to the book on bibliotheek.nl |
-
-"strict" fields may be missing during phase 1 and are required from the end of phase 2 (`validate_books.py --strict`).
+| `adaptation.platform` | string | yes | "Netflix" for this set |
+| `adaptation.note` | string | no | For example when the adaptation is only inspired by the book |
+| `teaser` | string | yes | Dutch, spoiler-free, what the book is about (40 to 70 words) |
+| `extraTeaser` | string | yes | Dutch, spoiler-free, what the book offers beyond the film or series (40 to 70 words) |
+| `links` | object[] | yes | Where to get the book, `{ "label": "Bibliotheek", "url": "https://..." }`. Starts with the bibliotheek.nl title page; more can be added later |
 
 `data/catalog.json`:
 
@@ -111,29 +120,33 @@ This contract is the interface between the two streams. Changing it requires agr
 
 ## 5. Open questions and how they are handled
 
-**Book covers.** `tools/fetch_covers.py` downloads each cover once by ISBN and stores it in `assets/covers/`, so the site never depends on an external service at runtime. Sources, in order:
-1. Open Library Covers API: `https://covers.openlibrary.org/b/isbn/<isbn>-L.jpg?default=false`
-2. Google Books API: `https://www.googleapis.com/books/v1/volumes?q=isbn:<isbn>` (`imageLinks`)
-3. No result: the site shows `assets/placeholder-cover.svg` with the title on it, and the cover is added by hand.
+**Book covers.** `tools/fetch_covers.py` downloads each cover once and stores it in `assets/covers/<id>.jpg`, so the site never depends on an external service at runtime. Sources, in order:
+1. bibliotheek.nl: the cover shown on the book's title page (the `links` entry for bibliotheek.nl). These images are signed, short-lived URLs on `leibniz.zbkb.nl`, which is why they are downloaded rather than linked.
+2. Open Library Covers API: `https://covers.openlibrary.org/b/isbn/<isbn>-L.jpg?default=false` (redirects to archive.org).
+3. No result: the script lists the book, the site shows `assets/placeholder-cover.svg`, and the cover is added by hand.
+
+Run `python tools/fetch_covers.py` for missing covers, `--force` to download all again, or pass book ids to limit it. The network must allow `www.bibliotheek.nl` and `leibniz.zbkb.nl` (and `covers.openlibrary.org` plus `archive.org` for the fallback).
 
 Covers are copyrighted. Using them in a local prototype is low risk, but permission and source must be checked before the site goes public (phase 4 decision).
 
-**bibliotheek.nl links.** `libraryUrl` is stored per book as a complete URL, looked up by hand. Stream I documents in `docs/CONTENT_GUIDE.md` (phase 1I) which URL form is stable: preferably the title page of the book, otherwise a catalogue search on ISBN.
+**bibliotheek.nl links.** The library link is stored per book in `links` as a complete URL, looked up by hand. Stream I documents in `docs/CONTENT_GUIDE.md` (phase 1I) which URL form is stable: preferably the title page of the book, otherwise a catalogue search on ISBN.
 
-**The 10 books.** Proposal below. Dutch titles, ISBNs and adaptation details are verified in phase 1 by the owner; swapping a book is allowed if this table is updated.
+**The 10 books.** All based on a Netflix film or series, for readers 12 to 18, half short (under 200 pages) and half medium (200 to 350 pages). Title, ISBN, publisher, pages and cover come from the bibliotheek.nl catalogue (checked November 2026). Dutch editions where the library has one; three books are only available in English.
 
-| Book id | Book | Adaptation | Content owner |
-|---|---|---|---|
-| `harry-potter-steen-der-wijzen` | Harry Potter en de Steen der Wijzen, J.K. Rowling | Film | R |
-| `de-hongerspelen` | De Hongerspelen, Suzanne Collins | Film | R |
-| `heartstopper-1` | Heartstopper deel 1, Alice Oseman | Series (Netflix) | R |
-| `oorlogswinter` | Oorlogswinter, Jan Terlouw | Film | R |
-| `duin` | Duin, Frank Herbert | Film | R |
-| `percy-jackson-bliksemdief` | Percy Jackson en de bliksemdief, Rick Riordan | Series (Disney+) | I |
-| `wonder` | Wonder, R.J. Palacio | Film | I |
-| `the-hate-u-give` | The Hate U Give, Angie Thomas | Film | I |
-| `de-zomer-dat-ik-mooi-werd` | The Summer I Turned Pretty (Dutch edition), Jenny Han | Series (Prime Video) | I |
-| `schim-en-schaduw` | Shadow and Bone (Dutch edition), Leigh Bardugo | Series (Netflix) | I |
+| Book id | Edition (bibliotheek.nl) | Lang. | Pages | Adaptation (Netflix) |
+|---|---|---|---|---|
+| `de-kleine-prins` | De kleine prins, Antoine de Saint-Exupéry (Ad. Donker 2024) | NL | 107 | Film, 2015 |
+| `het-ellendige-eerste-boek` | Het ellendige eerste boek, Lemony Snicket (Lannoo 2017) | NL | 151 | Series, 2017 |
+| `locke-and-key-welcome-to-lovecraft` | Locke & Key: Welcome to Lovecraft, Joe Hill & Gabriel Rodríguez (IDW 2020) | EN | 158 | Series, 2020 |
+| `enola-holmes-the-case-of-the-missing-marquess` | The Case of the Missing Marquess, Nancy Springer (Hot Key 2020) | EN | 167 | Film, 2020 |
+| `the-umbrella-academy-apocalypse-suite` | The Umbrella Academy: Apocalypse Suite, Gerard Way & Gabriel Bá (Dark Horse 2008) | EN | 184 | Series, 2019 |
+| `matilda` | Matilda, Roald Dahl (De Fontein Jeugd 2022) | NL | 206 | Film, 2022 |
+| `thirteen-reasons-why` | Thirteen reasons why, Jay Asher (Lemniscaat) | NL | 232 | Series, 2017 |
+| `arsene-lupin-gentleman-inbreker` | Arsène Lupin, gentleman-inbreker, Maurice Leblanc (Oevers 2021) | NL | 234 | Series, 2021 (inspired by) |
+| `heartstopper-1` | Heartstopper deel 1, Alice Oseman (Van Goor 2021) | NL | 263 | Series, 2022 |
+| `aan-alle-jongens-van-wie-ik-hield` | Aan alle jongens van wie ik hield, Jenny Han (Rainbow 2021) | NL | 319 | Film, 2018 |
+
+Sweet Tooth was dropped because bibliotheek.nl does not have it. Cover images on bibliotheek.nl are signed, short-lived URLs, so they are downloaded once into `assets/covers/` rather than linked. Copyright of the covers still needs a decision before the site goes public (phase 4).
 
 ## 6. Workflow for every phase
 
