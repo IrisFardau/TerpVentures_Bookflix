@@ -188,19 +188,11 @@ function renderBook(root, book) {
   root.replaceChildren(buildBackLink(), article);
 }
 
-function renderNotFound(root, hasId) {
-  document.title = `Boek niet gevonden – ${SITE_NAME}`;
+/** A message page with a heading, a short text and a button back to the home page. */
+function renderMessage(root, pageTitle, heading, text) {
+  document.title = `${pageTitle} – ${SITE_NAME}`;
   const box = el('div', 'detail-empty');
-  box.append(
-    el('h1', 'page-title', hasId ? 'Dit boek kunnen we niet vinden' : 'Geen boek gekozen'),
-    el(
-      'p',
-      'lead',
-      hasId
-        ? 'Misschien is de link verkeerd overgenomen, of staat het boek niet meer in Bookflix.'
-        : 'Kies een boek op de homepage om te zien wat het boek je geeft naast de film of serie.',
-    ),
-  );
+  box.append(el('h1', 'page-title', heading), el('p', 'lead', text));
   const home = el('a', 'btn btn-primary', 'Bekijk alle boeken');
   home.href = 'index.html';
   const actions = el('div', 'detail-actions');
@@ -209,19 +201,46 @@ function renderNotFound(root, hasId) {
   root.replaceChildren(box);
 }
 
+function renderNotFound(root, hasId) {
+  renderMessage(
+    root,
+    'Boek niet gevonden',
+    hasId ? 'Dit boek kunnen we niet vinden' : 'Geen boek gekozen',
+    hasId
+      ? 'Misschien is de link verkeerd overgenomen, of staat het boek niet meer in Bookflix.'
+      : 'Kies een boek op de homepage om te zien wat het boek je geeft naast de film of serie.',
+  );
+}
+
+function renderError(root) {
+  renderMessage(
+    root,
+    'Er ging iets mis',
+    'Er ging iets mis',
+    'Dit boek kon niet worden getoond. Probeer het later nog eens, of kies een ander boek.',
+  );
+}
+
 async function init() {
   const root = document.getElementById('book-detail');
   if (!root) return;
-  const params = new URLSearchParams(window.location.search);
-  const id = params.get('id');
-  if (!id) {
-    renderNotFound(root, false);
-  } else {
-    const book = await loadBook(id);
-    if (book) renderBook(root, book);
-    else renderNotFound(root, true);
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('id');
+    if (!id) {
+      renderNotFound(root, false);
+    } else {
+      const book = await loadBook(id);
+      if (book) renderBook(root, book);
+      else renderNotFound(root, true);
+    }
+  } catch (error) {
+    // Never leave the page stuck on the loading text.
+    console.error('[detail] Could not show the book:', error);
+    renderError(root);
+  } finally {
+    root.setAttribute('aria-busy', 'false');
   }
-  root.setAttribute('aria-busy', 'false');
 }
 
 init();
