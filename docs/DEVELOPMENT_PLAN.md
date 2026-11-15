@@ -15,7 +15,7 @@ Each stream updates only its own rows.
 | Phase | Stream | Branch | Depends on | Status |
 |---|---|---|---|---|
 | 0 Plan | joint | `main` | none | Done |
-| 1R Site shell | R | `phase-1r-site-shell` | 0 | Not started |
+| 1R Site shell | R | `phase-1r-site-shell` | 0 | In review |
 | 1I Data tooling | I | `phase-1i-data-tooling` | 0 | Not started |
 | 2R Home page and carousels | R | `phase-2r-home-carousels` | 1R, 1I | Not started |
 | 2I Detail page | I | `phase-2i-detail-page` | 1R, 1I | Not started |
@@ -47,7 +47,7 @@ Then open http://localhost:8000. Opening the HTML files directly from disk does 
 ```
 index.html                 home page (hero + carousels)
 boek.html                  detail page, opened as boek.html?id=<book-id>
-css/tokens.css             colours, type scale, spacing (dark streaming theme)
+css/tokens.css             colours, type scale, spacing (dark media-library theme)
 css/base.css               reset, header, footer, shared components
 css/home.css               hero and carousels
 css/detail.css             detail page
@@ -176,6 +176,15 @@ Both streams depend only on this plan and can start immediately.
 - Already done in PR #1: `data/catalog.json` and all ten book files with covers.
 - README: how to run and test locally.
 - Acceptance: both pages load on localhost with header and footer; the browser console lists the ten loaded books; renaming one book file makes the console warn about it while the pages keep working.
+
+*1R notes (decisions and deviations):*
+- Header and footer markup is duplicated as static HTML in `index.html` and `boek.html`. With no build step there are no includes, and static markup works without JavaScript. Keep the copies in sync; `python tools/check_shell.py` reports any page whose header or footer differs (apart from `aria-current`).
+- Visual style: the first theme (near-black with a red accent) looked too much like Netflix. It was replaced with a theme inspired by the Jellyfin media player: charcoal surfaces (`#101010` to `#303030`), blue accent `#00a4dc`, a purple-to-blue brand gradient (`#aa5cc3` to `#00a4dc`) used only for the logo mark and the placeholder cover, a translucent blurred header with tab-style navigation (accent underline on the current page), rounded corners, and `.section-title` for row headings. The logo is an original open-book mark, not Jellyfin's. Phase 2 and 3 styles should use the tokens in `css/tokens.css` rather than new colours.
+- Both pages have a small inline module script that calls `js/data.js` and logs to the console. Phase 2 replaces it with `js/home.js` and `js/detail.js`.
+- `js/data.js` also rejects ids that don't match `^[a-z0-9]+(-[a-z0-9]+)*$` before fetching, and checks the required fields and value types of the data contract in section 4 (including the ISBN-13 check digit). Word counts, the page limit and whether the cover file exists are left to `validate_books.py`. Results are cached per id. `loadAllBooks()` returns a `Map<id, book>` in catalogue order. `loadCatalog()` throws when the catalogue can't load, because no page works without it.
+- Book list and catalogue: while 1R was in progress, `main` replaced the original ten books with the Netflix set from section 5, including all ten book files, covers and `data/catalog.json` (featured `heartstopper-1`; rows "Bekend van Netflix", "Kort & krachtig", "Lekker doorlezen", "Graphic novels"). 1R took those over and dropped its own four placeholder book files (`harry-potter-steen-der-wijzen`, `de-hongerspelen`, `oorlogswinter`, `duin`). So the console now lists all ten books as loaded rather than warning about missing I books.
+- `assets/placeholder-cover.svg` shows a generic book icon and the logo, not the book title. A static SVG can't show a different title per book, so 2R and 2I put the title over it in HTML. With all covers present it is only a fallback for an image that fails to load.
+- `tools/__pycache__/` is in `.gitignore`; the compiled file committed on `main` was removed from the repo.
 
 **1I Data tooling** (`phase-1i-data-tooling`)
 - Files: `tools/validate_books.py`, `docs/CONTENT_GUIDE.md`.
