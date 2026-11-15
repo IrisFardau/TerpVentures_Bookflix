@@ -7,6 +7,8 @@
   <meta name="description" content="Lees wat het boek je geeft naast de film of serie.">
   <link rel="stylesheet" href="css/tokens.css">
   <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/detail.css">
+  <script type="module" src="js/detail.js"></script>
 </head>
 <body>
   <a class="skip-link" href="#inhoud">Naar inhoud</a>
@@ -36,10 +38,13 @@
   </header>
 
   <main id="inhoud" class="site-main" tabindex="-1">
-    <div class="container">
-      <h1 class="page-title">Boekdetails</h1>
-      <p class="lead">Boekdetails worden geladen…</p>
-      <p><a href="index.html">Terug naar home</a></p>
+    <div class="container" id="book-detail" aria-busy="true">
+      <p class="detail-loading">Boek wordt geladen…</p>
+      <noscript>
+        <h1 class="page-title">Boekdetails</h1>
+        <p class="lead">Zet JavaScript aan om de gegevens van dit boek te zien.</p>
+        <p><a href="index.html">Terug naar home</a></p>
+      </noscript>
     </div>
   </main>
 
@@ -49,25 +54,5 @@
       <p>Boeken lenen? Kijk op <a href="https://www.bibliotheek.nl" target="_blank" rel="noopener">bibliotheek.nl</a>.</p>
     </div>
   </footer>
-
-  <!-- Phase 1 smoke test of the data loader; replaced by js/detail.js in phase 2. -->
-  <script type="module">
-    import { loadAllBooks, loadBook } from './js/data.js';
-
-    const params = new URLSearchParams(window.location.search);
-    if (params.has('id')) {
-      // An empty or malformed id goes to loadBook too, so it is reported instead of hidden.
-      const id = params.get('id');
-      loadBook(id).then((book) => {
-        if (book) {
-          console.info('[detail] Book:', book);
-        } else {
-          console.warn(`[detail] No book found for id ${JSON.stringify(id)}`);
-        }
-      });
-    } else {
-      loadAllBooks().catch((error) => console.error('[detail] Could not load the catalogue:', error));
-    }
-  </script>
 </body>
 </html>

@@ -18,7 +18,7 @@ Each stream updates only its own rows.
 | 1R Site shell | R | `phase-1r-site-shell` | 0 | In review |
 | 1I Data tooling | I | `phase-1i-data-tooling` | 0 | In review |
 | 2R Home page and carousels | R | `phase-2r-home-carousels` | 1R, 1I | Not started |
-| 2I Detail page | I | `phase-2i-detail-page` | 1R, 1I | Not started |
+| 2I Detail page | I | `phase-2i-detail-page` | 1R, 1I | In review |
 | 3R Home page polish | R | `phase-3r-home-polish` | 2R, 2I | Not started |
 | 3I Detail page polish | I | `phase-3i-detail-polish` | 2R, 2I | Not started |
 | 4 Prototype release | joint | `phase-4-release` | 3R, 3I | Not started |
@@ -215,6 +215,18 @@ Both streams depend on 1R **and** 1I being merged: the UI needs the shell and da
 - UI: cover, title, author, a badge such as "Bekend van de Netflix-serie (2021)" (plus `adaptation.note` when present), genres, age, pages, reading time and language, the content warnings, the `teaser`, a section "Wat biedt het boek extra?" with `extraTeaser`, a button per entry in `links` (for example "Leen bij de Bibliotheek") that opens in a new tab, a link back to the home page, and a friendly Dutch message for an unknown or missing id.
 - Content: review the `teaser` and `extraTeaser` texts of the five I books against the content guide.
 - Acceptance: `boek.html?id=<id>` works for every book that has a file; an unknown id shows the not-found message; no link buttons show when `links` is empty; `validate_books.py --strict` passes.
+
+*2I notes (decisions and deviations):*
+- Built on the branch `claude/charming-mayer-xmj84x` instead of `phase-2i-detail-page`, like 1I.
+- Layout: cover left and title block right from 48rem wide, stacked on phones. Order: badge ("Bekend van de Netflix-serie <title> (<year>)", with `adaptation.note` below it), title, subtitle, author, genres, `teaser`, link buttons; then "Wat biedt het boek extra?" as a highlighted card, the content warnings under "Goed om te weten", and "Over dit boek" with age, length and pages, reading time, format, language, series, original title, edition and ISBN. The adaptation title is in the badge because it often differs from the book title.
+- A blurred copy of the cover fills the top of the page, in the spirit of the 1R media-player theme. Its URL is made absolute in JavaScript, because `url()` in a CSS custom property resolves against `css/detail.css`.
+- Reading time is shown as "ca. 2 uur en 15 min". The link labelled "Bibliotheek" shows as "Leen bij de Bibliotheek"; other labels are used as written. The first link is the primary button. Only `https:` links get a button, and every value from the data is set with `textContent`, never as HTML.
+- Not found: an unknown or invalid id shows "Dit boek kunnen we niet vinden", a missing id shows "Geen boek gekozen", both with a button back to the home page. Without JavaScript a `<noscript>` message shows.
+- When a cover fails to load, the placeholder is shown with the book title above the book icon.
+- `document.title` is set to "<title> – Bookflix" (or "Boek niet gevonden – Bookflix"). The description meta tag per book stays for 3I.
+- The phase 1 smoke-test script in `boek.html` was replaced by `js/detail.js`. `css/base.css` and `css/tokens.css` were not changed; `.btn`, `.section-title`, `.page-title` and `.lead` are reused.
+- Tested in Chromium at 1280 and 390 px wide: all ten books render with no console errors and no horizontal scroll; an unknown id and a missing id show their messages; with `links` replaced by a `javascript:` URL no button shows; HTML in a title is shown as text; a missing cover shows the placeholder; tab order is skip link, logo, Home, back link, library button. `validate_books.py --strict` and `check_shell.py` pass.
+- Content review of the five medium books (I) against the content guide: no changes needed; all texts are within 30 to 60 words and spoiler-free.
 
 ### Phase 3: Polish
 
