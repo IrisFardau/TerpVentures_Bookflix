@@ -79,12 +79,16 @@ This contract is the interface between the two streams. Changing it requires agr
 | Field | Type | Required | Notes |
 |---|---|---|---|
 | `id` | string | yes | Same as the filename, lowercase with hyphens |
-| `title` | string | yes | Title of the edition the ISBN belongs to |
+| `title` | string | yes | Title of the edition the ISBN belongs to, as listed on bibliotheek.nl |
+| `subtitle` | string | no | |
 | `originalTitle` | string | no | Only when the edition title is a translation |
 | `series` | string | no | Dutch, for example "Heartstopper, deel 1" |
 | `author` | string | yes | |
-| `isbn` | string | yes | ISBN-13, digits only. Used for the cover |
-| `cover` | string | yes | Open Library Covers URL: `https://covers.openlibrary.org/b/isbn/<isbn>-L.jpg` |
+| `isbn` | string | yes | ISBN-13, digits only, from bibliotheek.nl. Dutch edition where one exists |
+| `publisher` | string | yes | |
+| `year` | number | yes | Year of this edition |
+| `language` | string | yes | "Nederlands" or "Engels" |
+| `cover` | string | yes | Local path `assets/covers/<id>.jpg`, downloaded from the bibliotheek.nl catalogue |
 | `format` | `"roman"` or `"graphic novel"` | yes | |
 | `genres` | string[] | yes | Dutch genre names, used for carousel rows |
 | `pages` | number | yes | Max 350 |
@@ -99,7 +103,7 @@ This contract is the interface between the two streams. Changing it requires agr
 | `adaptation.note` | string | no | For example when the adaptation is only inspired by the book |
 | `teaser` | string | yes | Dutch, spoiler-free, what the book is about (40 to 70 words) |
 | `extraTeaser` | string | yes | Dutch, spoiler-free, what the book offers beyond the film or series (40 to 70 words) |
-| `links` | object[] | yes | Where to get the book. Empty for now; planned shape `{ "label": "Bibliotheek", "url": "https://..." }` |
+| `links` | object[] | yes | Where to get the book, `{ "label": "Bibliotheek", "url": "https://..." }`. Starts with the bibliotheek.nl title page; more can be added later |
 
 `data/catalog.json`:
 
@@ -123,24 +127,24 @@ This contract is the interface between the two streams. Changing it requires agr
 
 Covers are copyrighted. Using them in a local prototype is low risk, but permission and source must be checked before the site goes public (phase 4 decision).
 
-**bibliotheek.nl links.** `libraryUrl` is stored per book as a complete URL, looked up by hand. Stream I documents in `docs/CONTENT_GUIDE.md` (phase 1I) which URL form is stable: preferably the title page of the book, otherwise a catalogue search on ISBN.
+**bibliotheek.nl links.** The library link is stored per book in `links` as a complete URL, looked up by hand. Stream I documents in `docs/CONTENT_GUIDE.md` (phase 1I) which URL form is stable: preferably the title page of the book, otherwise a catalogue search on ISBN.
 
-**The 10 books.** All based on a Netflix film or series, for readers 12 to 18, half short (under 200 pages) and half medium (200 to 350 pages). ISBNs are English-language editions because Open Library has covers for those; Dutch editions can be added later.
+**The 10 books.** All based on a Netflix film or series, for readers 12 to 18, half short (under 200 pages) and half medium (200 to 350 pages). Title, ISBN, publisher, pages and cover come from the bibliotheek.nl catalogue (checked November 2026). Dutch editions where the library has one; three books are only available in English.
 
-| Book id | Book | Pages | Adaptation (Netflix) |
-|---|---|---|---|
-| `the-little-prince` | The Little Prince, Antoine de Saint-Exupéry | 96 | Film, 2015 |
-| `sweet-tooth-out-of-the-deep-woods` | Sweet Tooth 1, Jeff Lemire | 128 | Series, 2021 |
-| `locke-and-key-welcome-to-lovecraft` | Locke & Key 1, Joe Hill & Gabriel Rodríguez | 152 | Series, 2020 |
-| `the-bad-beginning` | The Bad Beginning, Lemony Snicket | 162 | Series, 2017 |
-| `the-umbrella-academy-apocalypse-suite` | The Umbrella Academy 1, Gerard Way & Gabriel Bá | 184 | Series, 2019 |
-| `enola-holmes-the-case-of-the-missing-marquess` | The Case of the Missing Marquess, Nancy Springer | 216 | Film, 2020 |
-| `matilda` | Matilda, Roald Dahl | 240 | Film, 2022 |
-| `arsene-lupin-gentleman-thief` | Arsène Lupin, Gentleman-Thief, Maurice Leblanc | 240 | Series, 2021 (inspired by) |
-| `heartstopper-1` | Heartstopper: Volume One, Alice Oseman | 288 | Series, 2022 |
-| `thirteen-reasons-why` | Thirteen Reasons Why, Jay Asher | 288 | Series, 2017 |
+| Book id | Edition (bibliotheek.nl) | Lang. | Pages | Adaptation (Netflix) |
+|---|---|---|---|---|
+| `de-kleine-prins` | De kleine prins, Antoine de Saint-Exupéry (Ad. Donker 2024) | NL | 107 | Film, 2015 |
+| `het-ellendige-eerste-boek` | Het ellendige eerste boek, Lemony Snicket (Lannoo 2017) | NL | 151 | Series, 2017 |
+| `locke-and-key-welcome-to-lovecraft` | Locke & Key: Welcome to Lovecraft, Joe Hill & Gabriel Rodríguez (IDW 2020) | EN | 158 | Series, 2020 |
+| `enola-holmes-the-case-of-the-missing-marquess` | The Case of the Missing Marquess, Nancy Springer (Hot Key 2020) | EN | 167 | Film, 2020 |
+| `the-umbrella-academy-apocalypse-suite` | The Umbrella Academy: Apocalypse Suite, Gerard Way & Gabriel Bá (Dark Horse 2008) | EN | 184 | Series, 2019 |
+| `matilda` | Matilda, Roald Dahl (De Fontein Jeugd 2022) | NL | 206 | Film, 2022 |
+| `thirteen-reasons-why` | Thirteen reasons why, Jay Asher (Lemniscaat) | NL | 232 | Series, 2017 |
+| `arsene-lupin-gentleman-inbreker` | Arsène Lupin, gentleman-inbreker, Maurice Leblanc (Oevers 2021) | NL | 234 | Series, 2021 (inspired by) |
+| `heartstopper-1` | Heartstopper deel 1, Alice Oseman (Van Goor 2021) | NL | 263 | Series, 2022 |
+| `aan-alle-jongens-van-wie-ik-hield` | Aan alle jongens van wie ik hield, Jenny Han (Rainbow 2021) | NL | 319 | Film, 2018 |
 
-Page counts, ISBNs and covers still need a check against Open Library in phase 1.
+Sweet Tooth was dropped because bibliotheek.nl does not have it. Cover images on bibliotheek.nl are signed, short-lived URLs, so they are downloaded once into `assets/covers/` rather than linked. Copyright of the covers still needs a decision before the site goes public (phase 4).
 
 ## 6. Workflow for every phase
 

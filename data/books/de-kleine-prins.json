@@ -1,20 +1,23 @@
 {
-  "id": "the-little-prince",
-  "title": "The Little Prince",
+  "id": "de-kleine-prins",
+  "title": "De kleine prins",
   "originalTitle": "Le Petit Prince",
   "author": "Antoine de Saint-Exupéry",
-  "isbn": "9780156012195",
-  "cover": "https://covers.openlibrary.org/b/isbn/9780156012195-L.jpg",
+  "isbn": "9789061007753",
+  "publisher": "Ad. Donker",
+  "year": 2024,
+  "language": "Nederlands",
+  "cover": "assets/covers/de-kleine-prins.jpg",
   "format": "roman",
   "genres": [
     "Fantasy",
     "Filosofisch",
     "Klassieker"
   ],
-  "pages": 96,
+  "pages": 107,
   "length": "kort",
-  "readingTimeMinutes": 90,
-  "age": "10+",
+  "readingTimeMinutes": 105,
+  "age": "9+",
   "contentWarnings": [
     "verlies en afscheid"
   ],
@@ -26,5 +29,10 @@
   },
   "teaser": "Een piloot maakt een noodlanding in de woestijn en ontmoet daar een jongen die van een piepklein planeetje komt. De kleine prins vertelt over zijn reis langs vreemde volwassenen, een eigenwijze roos en een vos die wil worden getemd.",
   "extraTeaser": "De film verpakt het verhaal in een nieuw verhaal over een meisje van nu. Het boek geeft je het origineel: korte hoofdstukken, de eigen tekeningen van de schrijver en zinnen die je wilt onthouden. Je leest het in één avond, maar het blijft veel langer hangen.",
-  "links": []
+  "links": [
+    {
+      "label": "Bibliotheek",
+      "url": "https://www.bibliotheek.nl/catalogus/titel.444200568.html"
+    }
+  ]
 }

@@ -1,18 +1,22 @@
 {
   "id": "thirteen-reasons-why",
-  "title": "Thirteen Reasons Why",
+  "title": "Thirteen reasons why",
+  "subtitle": "een testament...",
   "author": "Jay Asher",
-  "isbn": "9781595141712",
-  "cover": "https://covers.openlibrary.org/b/isbn/9781595141712-L.jpg",
+  "isbn": "9789047703266",
+  "publisher": "Lemniscaat",
+  "year": 2017,
+  "language": "Nederlands",
+  "cover": "assets/covers/thirteen-reasons-why.jpg",
   "format": "roman",
   "genres": [
     "Drama",
     "Mysterie",
     "Realistisch"
   ],
-  "pages": 288,
+  "pages": 232,
   "length": "middel",
-  "readingTimeMinutes": 285,
+  "readingTimeMinutes": 225,
   "age": "15+",
   "contentWarnings": [
     "zelfdoding",
@@ -28,5 +32,10 @@
   },
   "teaser": "Clay Jensen vindt een pakketje met cassettebandjes voor zijn deur. Ze zijn ingesproken door Hannah Baker, een klasgenoot die er niet meer is. Op de bandjes vertelt ze over dertien redenen. Eén ervan gaat over Clay.",
   "extraTeaser": "Het boek speelt zich af in één nacht en is veel compacter dan de serie: je hoort Hannahs stem en Clays gedachten bijna tegelijk, wat het intens en snel maakt. Het verhaal blijft dichter bij die twee, zonder de extra verhaallijnen van de serie.",
-  "links": []
+  "links": [
+    {
+      "label": "Bibliotheek",
+      "url": "https://www.bibliotheek.nl/catalogus/titel.400396491.html"
+    }
+  ]
 }
