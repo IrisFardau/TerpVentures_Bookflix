@@ -16,7 +16,7 @@ Each stream updates only its own rows.
 |---|---|---|---|---|
 | 0 Plan | joint | `main` | none | Done |
 | 1R Site shell | R | `phase-1r-site-shell` | 0 | In review |
-| 1I Data tooling | I | `phase-1i-data-tooling` | 0 | Not started |
+| 1I Data tooling | I | `phase-1i-data-tooling` | 0 | In review |
 | 2R Home page and carousels | R | `phase-2r-home-carousels` | 1R, 1I | Not started |
 | 2I Detail page | I | `phase-2i-detail-page` | 1R, 1I | Not started |
 | 3R Home page polish | R | `phase-3r-home-polish` | 2R, 2I | Not started |
@@ -101,9 +101,11 @@ This contract is the interface between the two streams. Changing it requires agr
 | `adaptation.year` | number | yes | |
 | `adaptation.platform` | string | yes | "Netflix" for this set |
 | `adaptation.note` | string | no | For example when the adaptation is only inspired by the book |
-| `teaser` | string | yes | Dutch, spoiler-free, what the book is about (40 to 70 words) |
-| `extraTeaser` | string | yes | Dutch, spoiler-free, what the book offers beyond the film or series (40 to 70 words) |
+| `teaser` | string | yes | Dutch, spoiler-free, what the book is about (30 to 60 words) |
+| `extraTeaser` | string | yes | Dutch, spoiler-free, what the book offers beyond the film or series (30 to 60 words) |
 | `links` | object[] | yes | Where to get the book, `{ "label": "Bibliotheek", "url": "https://..." }`. Starts with the bibliotheek.nl title page; more can be added later |
+
+`tools/validate_books.py` checks the types and required fields above, the ISBN-13 check digit, unknown fields (typos), that the filename matches `id`, and that every id in the catalogue has a file. With `--strict` it also checks the content rules from section 5 and `docs/CONTENT_GUIDE.md`: at most 350 pages, `length` and `readingTimeMinutes` match `pages`, `teaser` and `extraTeaser` are 30 to 60 words, the cover is a JPEG at `assets/covers/<id>.jpg`, the first link is the bibliotheek.nl title page, `adaptation.platform` is "Netflix", two or three genres with "Graphic novel" first for a graphic novel, lowercase content warnings, and that each book is in the right catalogue rows. Style hints (empty praise, possible spoilers, new genres, unused covers, short/medium balance) are warnings that don't fail the run. All ten book files pass `--strict`.
 
 `data/catalog.json`:
 
@@ -129,7 +131,7 @@ Run `python tools/fetch_covers.py` for missing covers, `--force` to download all
 
 Covers are copyrighted. Using them in a local prototype is low risk, but permission and source must be checked before the site goes public (phase 4 decision).
 
-**bibliotheek.nl links.** The library link is stored per book in `links` as a complete URL, looked up by hand. Stream I documents in `docs/CONTENT_GUIDE.md` (phase 1I) which URL form is stable: preferably the title page of the book, otherwise a catalogue search on ISBN.
+**bibliotheek.nl links.** The library link is stored per book as the first entry in `links`, as a complete URL to the book's title page: `https://www.bibliotheek.nl/catalogus/titel.<ppn>.html`. Find it by searching `https://www.bibliotheek.nl/catalogus.html?q=<title author>` and opening the right edition. `docs/CONTENT_GUIDE.md` (phase 1I) describes this step.
 
 **The 10 books.** All based on a Netflix film or series, for readers 12 to 18, half short (under 200 pages) and half medium (200 to 350 pages). Title, ISBN, publisher, pages and cover come from the bibliotheek.nl catalogue (checked November 2026). Dutch editions where the library has one; three books are only available in English.
 
@@ -145,6 +147,8 @@ Covers are copyrighted. Using them in a local prototype is low risk, but permiss
 | `arsene-lupin-gentleman-inbreker` | Arsène Lupin, gentleman-inbreker, Maurice Leblanc (Oevers 2021) | NL | 234 | Series, 2021 (inspired by) |
 | `heartstopper-1` | Heartstopper deel 1, Alice Oseman (Van Goor 2021) | NL | 263 | Series, 2022 |
 | `aan-alle-jongens-van-wie-ik-hield` | Aan alle jongens van wie ik hield, Jenny Han (Rainbow 2021) | NL | 319 | Film, 2018 |
+
+Content ownership for reviews in phases 2 and 3: stream R owns the five short books, stream I the five medium books.
 
 Sweet Tooth was dropped because bibliotheek.nl does not have it. Cover images on bibliotheek.nl are signed, short-lived URLs, so they are downloaded once into `assets/covers/` rather than linked. Copyright of the covers still needs a decision before the site goes public (phase 4).
 
@@ -166,13 +170,12 @@ Nothing is committed directly to `main` after phase 0. The GitHub CLI is not ins
 Both streams depend only on this plan and can start immediately.
 
 **1R Site shell** (`phase-1r-site-shell`)
-- Files: `index.html`, `boek.html`, `css/tokens.css`, `css/base.css`, `js/data.js`, `data/catalog.json`, `assets/placeholder-cover.svg`, `README.md`, `.gitignore`, and `data/books/` files for the five R books.
+- Files: `index.html`, `boek.html`, `css/tokens.css`, `css/base.css`, `js/data.js`, `assets/placeholder-cover.svg`, `README.md`, `.gitignore`.
 - UI: page shells with shared header and footer, the dark streaming theme as CSS variables, Dutch interface text.
 - Data loading: `js/data.js` as described in the data contract, including skipping missing book files.
-- `data/catalog.json` with first rows (for example "Bekend van Netflix", "Van boek naar film", "Fantasy") that reference all ten book ids from section 5.
-- Content: metadata for the five R books (all non-strict fields, verified Dutch title and ISBN).
+- Already done in PR #1: `data/catalog.json` and all ten book files with covers.
 - README: how to run and test locally.
-- Acceptance: both pages load on localhost with header and footer; the browser console lists the loaded R books and warns about the five I books not yet present.
+- Acceptance: both pages load on localhost with header and footer; the browser console lists the ten loaded books; renaming one book file makes the console warn about it while the pages keep working.
 
 *1R notes (decisions and deviations):*
 - Header and footer markup is duplicated as static HTML in `index.html` and `boek.html`. With no build step there are no includes, and static markup works without JavaScript. Keep the copies in sync; `python tools/check_shell.py` reports any page whose header or footer differs (apart from `aria-current`).
@@ -184,28 +187,34 @@ Both streams depend only on this plan and can start immediately.
 - `tools/__pycache__/` is in `.gitignore`; the compiled file committed on `main` was removed from the repo.
 
 **1I Data tooling** (`phase-1i-data-tooling`)
-- Files: `tools/validate_books.py`, `tools/fetch_covers.py`, `docs/CONTENT_GUIDE.md`, and `data/books/` files for the five I books.
-- `validate_books.py`: checks every book file against the contract, that the filename matches `id`, that catalogue ids resolve to a file, and with `--strict` also the strict fields, word limits and that the cover file exists. Exit code 1 on errors.
-- `fetch_covers.py`: for each book without a cover file, tries the sources from section 5 and reports which books still need a cover by hand.
-- `CONTENT_GUIDE.md`: tone for the target group, the spoiler-free rule, the focus on what the book adds, length limits, and how to find the bibliotheek.nl link.
-- Content: metadata for the five I books.
-- Acceptance: the validator passes on the I books and fails with a clear message on a deliberately broken file; the cover script downloads at least one cover.
+- Files: `tools/validate_books.py`, `docs/CONTENT_GUIDE.md`.
+- Already done in PR #1: `tools/fetch_covers.py` and all ten book files with covers.
+- `validate_books.py`: checks every book file against the contract, that the filename matches `id`, and that catalogue ids resolve to a file; with `--strict` also the checks listed under the data contract. Exit code 1 on errors.
+- `CONTENT_GUIDE.md`: tone for the target group, the spoiler-free rule, how to write `teaser` and `extraTeaser` (30 to 60 words, `extraTeaser` about what the book adds), choosing `age` and `contentWarnings`, the reading-time formula, and how to find the edition, ISBN and link on bibliotheek.nl.
+- Acceptance: the validator passes on all ten books, also with `--strict`, and fails with a clear message on a deliberately broken file.
+
+*1I notes (decisions and deviations):*
+- 1I was built on the branch `claude/charming-mayer-xmj84x` instead of `phase-1i-data-tooling`, together with the book data and the plan updates for the new contract.
+- The teaser limit is 30 to 60 words instead of the 40 to 70 first written in section 4: six of the ten texts are shorter than 40 words, and short suits the target group.
+- `validate_books.py` has three levels: contract errors (always), content errors (`--strict`) and warnings (never fail). Rules that need judgement, like spoilers and empty praise, are warnings based on word lists in the script; they help a reviewer but don't replace one.
+- The validator has a hidden `--root <dir>` option to run it on a copy of `data/` and `assets/`. The acceptance test used it on copies with a broken JSON file, a wrong ISBN check digit, too many pages, a missing cover, a non-JPEG cover, a wrong `id`, an unknown field and catalogue mistakes; each gave a clear error and exit code 1.
+- The content guide is in English like the other docs, with Dutch examples.
 
 ### Phase 2: Core features
 
 Both streams depend on 1R **and** 1I being merged: the UI needs the shell and data loader from 1R, the content needs the tools and guide from 1I.
 
 **2R Home page and carousels** (`phase-2r-home-carousels`)
-- Files: `index.html`, `css/home.css`, `js/carousel.js`, `js/home.js`, covers and book files for the five R books.
-- UI: hero banner for the featured book (cover, title, tagline, button "Bekijk boek"); one carousel per catalogue row with cover and title per book; horizontal scrolling with arrow buttons, touch and keyboard; hover effect; each card links to `boek.html?id=<id>`; placeholder cover when an image is missing.
-- Content: covers, `tagline`, `description`, `extras` and `libraryUrl` for the five R books, following the content guide.
-- Acceptance: all rows render from `catalog.json`; arrows scroll; every card opens the right detail URL; `validate_books.py --strict` passes for the R books.
+- Files: `index.html`, `css/home.css`, `js/carousel.js`, `js/home.js`.
+- UI: hero banner for the featured book (cover, title, `teaser`, button "Bekijk boek"); one carousel per catalogue row with cover and title per book; horizontal scrolling with arrow buttons, touch and keyboard; hover effect; each card links to `boek.html?id=<id>`; placeholder cover when an image is missing.
+- Content: review the `teaser` texts of the five R books against the content guide.
+- Acceptance: all rows render from `catalog.json`; arrows scroll; every card opens the right detail URL; `validate_books.py --strict` passes.
 
 **2I Detail page** (`phase-2i-detail-page`)
-- Files: `boek.html`, `css/detail.css`, `js/detail.js`, covers and book files for the five I books.
-- UI: cover, title, author, a badge such as "Bekend van de Netflix-serie (2021)", genres and age, the description, a section "Wat biedt het boek extra?" listing `extras`, a button "Leen bij de Bibliotheek" that opens `libraryUrl` in a new tab, a link back to the home page, and a friendly Dutch message for an unknown or missing id.
-- Content: the same strict fields for the five I books.
-- Acceptance: `boek.html?id=<id>` works for every book that has a file; an unknown id shows the not-found message; the library button is hidden when `libraryUrl` is missing; `--strict` passes for the I books.
+- Files: `boek.html`, `css/detail.css`, `js/detail.js`.
+- UI: cover, title, author, a badge such as "Bekend van de Netflix-serie (2021)" (plus `adaptation.note` when present), genres, age, pages, reading time and language, the content warnings, the `teaser`, a section "Wat biedt het boek extra?" with `extraTeaser`, a button per entry in `links` (for example "Leen bij de Bibliotheek") that opens in a new tab, a link back to the home page, and a friendly Dutch message for an unknown or missing id.
+- Content: review the `teaser` and `extraTeaser` texts of the five I books against the content guide.
+- Acceptance: `boek.html?id=<id>` works for every book that has a file; an unknown id shows the not-found message; no link buttons show when `links` is empty; `validate_books.py --strict` passes.
 
 ### Phase 3: Polish
 
@@ -239,6 +248,6 @@ Depends on 3R and 3I. One branch, `phase-4-release`, worked on together.
 ## 8. Verification summary
 
 - Local server: `python -m http.server 8000`, then http://localhost:8000.
-- Data: `python tools/validate_books.py` (phase 1), with `--strict` from the end of phase 2.
+- Data: `python tools/validate_books.py --strict` (passes from phase 1I on).
 - Per phase: the acceptance checks in section 7.
 - Whole site: `docs/TEST_CHECKLIST.md` (from phase 3I).
