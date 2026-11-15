@@ -1,14 +1,40 @@
 {
   "id": "heartstopper-1",
-  "title": "Heartstopper 1",
+  "title": "Heartstopper",
+  "subtitle": "Nick en Charlie ontmoeten elkaar…",
+  "series": "Heartstopper, deel 1",
   "author": "Alice Oseman",
   "isbn": "9789000378807",
+  "publisher": "Van Goor",
+  "year": 2021,
+  "language": "Nederlands",
+  "cover": "assets/covers/heartstopper-1.jpg",
+  "format": "graphic novel",
+  "genres": [
+    "Graphic novel",
+    "Romantiek",
+    "LHBTIQ+"
+  ],
+  "pages": 263,
+  "length": "middel",
+  "readingTimeMinutes": 135,
+  "age": "13+",
+  "contentWarnings": [
+    "pesten",
+    "homofobie"
+  ],
   "adaptation": {
     "type": "serie",
     "title": "Heartstopper",
     "year": 2022,
     "platform": "Netflix"
   },
-  "genres": ["Romantiek", "Graphic novel", "LHBTIQ+"],
-  "age": "12+"
+  "teaser": "Charlie is verlegen, een beetje een nerd en sinds kort uit de kast. Nick is de populaire rugbyspeler van school. Als ze naast elkaar komen te zitten, worden ze vrienden. Maar Charlie voelt al snel meer dan vriendschap. Zou Nick dat ook doen?",
+  "extraTeaser": "Dit is het origineel waar de serie uit voortkwam. De tekeningen laten in één blik zien wat de personages voelen, vaak zonder woorden. Je ontmoet Nick en Charlie zoals de bedenker ze voor het eerst tekende, met kleine momenten die in de serie net anders gaan.",
+  "links": [
+    {
+      "label": "Bibliotheek",
+      "url": "https://www.bibliotheek.nl/catalogus/titel.433151897.html"
+    }
+  ]
 }

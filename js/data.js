@@ -6,6 +6,8 @@ const BOOKS_URL = new URL('../data/books/', import.meta.url);
 const ID_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const ISBN_PATTERN = /^\d{13}$/;
 const ADAPTATION_TYPES = ['film', 'serie'];
+const FORMATS = ['roman', 'graphic novel'];
+const LENGTHS = ['kort', 'middel'];
 
 const bookCache = new Map();
 let catalogPromise = null;
@@ -40,21 +42,40 @@ function isValidIsbn13(value) {
   return sum % 10 === 0;
 }
 
-// Returns a list of problems with the required (non-strict) fields and the
-// types of optional fields that are present. Empty means valid.
+function isStringList(value) {
+  return Array.isArray(value) && value.every(isNonEmptyString);
+}
+
+// Returns a list of problems with the required fields and the types of
+// optional fields that are present. Empty means valid. Word counts, the page
+// limit and whether the cover file exists are left to tools/validate_books.py.
 function checkBook(book, id) {
   if (!isPlainObject(book)) {
     return ['not a JSON object'];
   }
   const problems = [];
   if (book.id !== id) problems.push(`id "${book.id}" does not match filename`);
-  for (const field of ['title', 'author']) {
+  for (const field of ['title', 'author', 'publisher', 'language', 'cover', 'age', 'teaser', 'extraTeaser']) {
     if (!isNonEmptyString(book[field])) problems.push(`missing ${field}`);
+  }
+  for (const field of ['subtitle', 'originalTitle', 'series']) {
+    if (book[field] !== undefined && !isNonEmptyString(book[field])) problems.push(`${field} must be a string`);
   }
   if (!isNonEmptyString(book.isbn)) {
     problems.push('missing isbn');
   } else if (!isValidIsbn13(book.isbn)) {
     problems.push(`isbn "${book.isbn}" must be an ISBN-13 (13 digits, no hyphens, valid check digit)`);
+  }
+  for (const field of ['year', 'pages', 'readingTimeMinutes']) {
+    if (!Number.isInteger(book[field]) || book[field] <= 0) problems.push(`${field} must be a positive whole number`);
+  }
+  if (!FORMATS.includes(book.format)) problems.push('format must be "roman" or "graphic novel"');
+  if (!LENGTHS.includes(book.length)) problems.push('length must be "kort" or "middel"');
+  if (!isStringList(book.genres) || book.genres.length === 0) {
+    problems.push('genres must be a non-empty list of strings');
+  }
+  if (!isStringList(book.contentWarnings)) {
+    problems.push('contentWarnings must be a list of strings (empty when none)');
   }
   const adaptation = book.adaptation;
   if (!isPlainObject(adaptation)) {
@@ -63,15 +84,17 @@ function checkBook(book, id) {
     if (!ADAPTATION_TYPES.includes(adaptation.type)) problems.push('adaptation.type must be "film" or "serie"');
     if (!isNonEmptyString(adaptation.title)) problems.push('missing adaptation.title');
     if (!Number.isInteger(adaptation.year)) problems.push('adaptation.year must be a number');
-    if (adaptation.platform !== undefined && !isNonEmptyString(adaptation.platform)) {
-      problems.push('adaptation.platform must be a string');
+    if (!isNonEmptyString(adaptation.platform)) problems.push('missing adaptation.platform');
+    if (adaptation.note !== undefined && !isNonEmptyString(adaptation.note)) {
+      problems.push('adaptation.note must be a string');
     }
   }
-  if (!Array.isArray(book.genres) || book.genres.length === 0 || !book.genres.every(isNonEmptyString)) {
-    problems.push('genres must be a non-empty list of strings');
-  }
-  if (book.age !== undefined && !isNonEmptyString(book.age)) {
-    problems.push('age must be a string such as "12+"');
+  if (
+    !Array.isArray(book.links) ||
+    book.links.length === 0 ||
+    !book.links.every((link) => isPlainObject(link) && isNonEmptyString(link.label) && isNonEmptyString(link.url))
+  ) {
+    problems.push('links must be a non-empty list of { label, url }');
   }
   return problems;
 }

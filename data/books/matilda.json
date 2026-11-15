@@ -1,0 +1,38 @@
+{
+  "id": "matilda",
+  "title": "Matilda",
+  "author": "Roald Dahl",
+  "isbn": "9789026160790",
+  "publisher": "De Fontein Jeugd",
+  "year": 2022,
+  "language": "Nederlands",
+  "cover": "assets/covers/matilda.jpg",
+  "format": "roman",
+  "genres": [
+    "Humor",
+    "Fantasy",
+    "Klassieker"
+  ],
+  "pages": 206,
+  "length": "middel",
+  "readingTimeMinutes": 210,
+  "age": "10+",
+  "contentWarnings": [
+    "kindermishandeling",
+    "pesten door volwassenen"
+  ],
+  "adaptation": {
+    "type": "film",
+    "title": "Roald Dahl's Matilda the Musical",
+    "year": 2022,
+    "platform": "Netflix"
+  },
+  "teaser": "Matilda is hoogbegaafd en leest al op haar vierde de hele bibliotheek leeg, maar haar ouders vinden haar vooral lastig. Op school regeert een angstaanjagende directrice. Gelukkig ontdekt Matilda dat ze iets kan wat niemand anders kan.",
+  "extraTeaser": "Zonder liedjes en dans blijft de pure humor van Roald Dahl over: absurde straffen, briljante wraakacties en de tekeningen van Quentin Blake. Je merkt meteen hoeveel van de beste grappen uit de film eigenlijk uit het boek komen, en dat er nog meer in staan.",
+  "links": [
+    {
+      "label": "Bibliotheek",
+      "url": "https://www.bibliotheek.nl/catalogus/titel.436627213.html"
+    }
+  ]
+}

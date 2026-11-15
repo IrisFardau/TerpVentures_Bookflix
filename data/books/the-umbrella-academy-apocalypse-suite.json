@@ -1,0 +1,40 @@
+{
+  "id": "the-umbrella-academy-apocalypse-suite",
+  "title": "The Umbrella Academy: Apocalypse Suite",
+  "series": "The Umbrella Academy, deel 1",
+  "author": "Gerard Way & Gabriel Bá",
+  "isbn": "9781593079789",
+  "publisher": "Dark Horse Books",
+  "year": 2008,
+  "language": "Engels",
+  "cover": "assets/covers/the-umbrella-academy-apocalypse-suite.jpg",
+  "format": "graphic novel",
+  "genres": [
+    "Graphic novel",
+    "Superhelden",
+    "Sciencefiction"
+  ],
+  "pages": 184,
+  "length": "kort",
+  "readingTimeMinutes": 90,
+  "age": "15+",
+  "contentWarnings": [
+    "geweld",
+    "bloed",
+    "emotionele verwaarlozing"
+  ],
+  "adaptation": {
+    "type": "serie",
+    "title": "The Umbrella Academy",
+    "year": 2019,
+    "platform": "Netflix"
+  },
+  "teaser": "Op dezelfde dag worden overal ter wereld 43 baby's geboren uit moeders die een dag eerder nog niet zwanger waren. Een excentrieke miljonair adopteert er zeven en traint ze tot superheldenteam. Jaren later komen de uit elkaar gegroeide broers en zussen weer samen, net als de wereld op het punt staat te vergaan.",
+  "extraTeaser": "De comic is nog gekker, sneller en kleurrijker dan de serie: pratende chimpansees, een Eiffeltoren die op hol slaat en tekeningen waar je telkens nieuwe details in ontdekt. Ontdek hoe het allemaal begon, in de stijl van de bedenker zelf.",
+  "links": [
+    {
+      "label": "Bibliotheek",
+      "url": "https://www.bibliotheek.nl/catalogus/titel.430830602.html"
+    }
+  ]
+}

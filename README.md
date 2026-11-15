@@ -19,12 +19,12 @@ Opening the HTML files straight from disk does not work: browsers block `fetch` 
 ## Pages
 
 - `index.html`: the home page.
-- `boek.html?id=<book-id>`: the detail page for one book, for example http://localhost:8000/boek.html?id=duin.
+- `boek.html?id=<book-id>`: the detail page for one book, for example http://localhost:8000/boek.html?id=heartstopper-1.
 
 ## Test locally
 
 1. Start the server as above.
-2. Open http://localhost:8000 and http://localhost:8000/boek.html?id=duin. Both pages should show the header and footer.
+2. Open http://localhost:8000 and http://localhost:8000/boek.html?id=heartstopper-1. Both pages should show the header and footer.
 3. Open the browser console (F12). The data loader logs which books loaded and prints a warning for every book file that is missing or invalid. Missing books are skipped, so the site keeps working while content is being added.
 4. Check the data files:
 
@@ -33,6 +33,7 @@ Opening the HTML files straight from disk does not work: browsers block `fetch` 
    ```
 
    From the end of phase 2, also run it with `--strict`.
+5. Covers are stored in `assets/covers/`. To download missing ones, run `python tools/fetch_covers.py` (see section 5 of the development plan).
 
 ## Project layout
 

@@ -1,37 +1,47 @@
 {
-  "featured": "de-hongerspelen",
+  "featured": "heartstopper-1",
   "rows": [
     {
       "title": "Bekend van Netflix",
-      "books": ["heartstopper-1", "schim-en-schaduw"]
-    },
-    {
-      "title": "Van boek naar film",
       "books": [
-        "harry-potter-steen-der-wijzen",
-        "de-hongerspelen",
-        "oorlogswinter",
-        "duin",
-        "wonder",
-        "the-hate-u-give"
-      ]
-    },
-    {
-      "title": "Fantasy",
-      "books": [
-        "harry-potter-steen-der-wijzen",
-        "percy-jackson-bliksemdief",
-        "schim-en-schaduw",
-        "duin"
-      ]
-    },
-    {
-      "title": "Series om te bingen",
-      "books": [
+        "het-ellendige-eerste-boek",
+        "de-kleine-prins",
+        "the-umbrella-academy-apocalypse-suite",
+        "locke-and-key-welcome-to-lovecraft",
+        "enola-holmes-the-case-of-the-missing-marquess",
+        "matilda",
+        "thirteen-reasons-why",
+        "arsene-lupin-gentleman-inbreker",
         "heartstopper-1",
-        "percy-jackson-bliksemdief",
-        "de-zomer-dat-ik-mooi-werd",
-        "schim-en-schaduw"
+        "aan-alle-jongens-van-wie-ik-hield"
+      ]
+    },
+    {
+      "title": "Kort & krachtig (tot 200 pagina's)",
+      "books": [
+        "het-ellendige-eerste-boek",
+        "de-kleine-prins",
+        "the-umbrella-academy-apocalypse-suite",
+        "locke-and-key-welcome-to-lovecraft",
+        "enola-holmes-the-case-of-the-missing-marquess"
+      ]
+    },
+    {
+      "title": "Lekker doorlezen (200 tot 350 pagina's)",
+      "books": [
+        "matilda",
+        "thirteen-reasons-why",
+        "arsene-lupin-gentleman-inbreker",
+        "heartstopper-1",
+        "aan-alle-jongens-van-wie-ik-hield"
+      ]
+    },
+    {
+      "title": "Graphic novels",
+      "books": [
+        "the-umbrella-academy-apocalypse-suite",
+        "locke-and-key-welcome-to-lovecraft",
+        "heartstopper-1"
       ]
     }
   ]
