@@ -5,8 +5,7 @@ import { loadAllBooks, loadCatalog } from './data.js';
 import { createCarousel } from './carousel.js';
 import { createCover, detailUrl, el } from './dom.js';
 
-/** Teardown functions of the carousels currently on the page. */
-const carousels = [];
+let heroCount = 0;
 
 /** For example "Bekend van de Netflix-serie (2022)". */
 function adaptationBadge({ type, platform, year }) {
@@ -23,21 +22,26 @@ function formatReadingTime(minutes) {
 }
 
 function createHero(book) {
-  const hero = el('section', 'hero');
-  hero.setAttribute('aria-labelledby', 'hero-titel');
+  heroCount += 1;
+  const titleId = `hero-${heroCount}-titel`;
 
-  // Blurred copy of the cover as a backdrop, like the banner in a media library.
-  const backdrop = el('img', 'hero__backdrop');
-  backdrop.src = book.cover;
-  backdrop.alt = '';
-  backdrop.addEventListener('error', () => backdrop.remove(), { once: true });
+  const hero = el('section', 'hero');
+  hero.setAttribute('aria-labelledby', titleId);
+
+  // Blurred copy of the cover as a backdrop (.hero::before), like the banner in
+  // a media library. A CSS background reuses the cover download without a
+  // second <img>; if it fails to load, the backdrop just stays empty. The URL is
+  // made absolute because a relative url() in a custom property would resolve
+  // against css/home.css instead of the page.
+  const backdropUrl = new URL(book.cover, document.baseURI).href;
+  hero.style.setProperty('--hero-backdrop', `url(${JSON.stringify(backdropUrl)})`);
 
   const inner = el('div', 'container hero__inner');
   const cover = createCover(book, { className: 'hero__cover', loading: 'eager' });
 
   const body = el('div', 'hero__body');
   const title = el('h2', 'hero__title', book.title);
-  title.id = 'hero-titel';
+  title.id = titleId;
 
   const facts = el('ul', 'hero__facts');
   facts.setAttribute('role', 'list');
@@ -61,58 +65,54 @@ function createHero(book) {
     button,
   );
   inner.append(cover, body);
-  hero.append(backdrop, inner);
+  hero.append(inner);
   return hero;
 }
 
-function showStatus(status, message) {
-  status.textContent = message;
-  status.hidden = false;
-}
-
-async function render(heroSlot, rowsSlot, status) {
+/** Builds the hero and the rows, and only puts them on the page once all of them are built. */
+async function render(heroSlot, rowsSlot) {
   const catalog = await loadCatalog();
   // Pass the catalogue on, so the rows and the loaded books come from the same one.
   const books = await loadAllBooks(catalog);
 
   const featured = books.get(catalog.featured);
-  if (featured) heroSlot.append(createHero(featured));
-
-  let rowCount = 0;
-  for (const row of catalog.rows) {
-    const rowBooks = row.books.map((id) => books.get(id)).filter(Boolean);
-    if (rowBooks.length === 0) {
-      console.warn(`[home] Skipping row "${row.title}": none of its books could be loaded`);
-      continue;
+  const rows = [];
+  try {
+    for (const row of catalog.rows) {
+      const rowBooks = row.books.map((id) => books.get(id)).filter(Boolean);
+      if (rowBooks.length === 0) {
+        console.warn(`[home] Skipping row "${row.title}": none of its books could be loaded`);
+        continue;
+      }
+      rows.push(createCarousel(row.title, rowBooks));
     }
-    const carousel = createCarousel(row.title, rowBooks);
-    carousels.push(carousel.destroy);
-    rowsSlot.append(carousel.element);
-    rowCount += 1;
+    const hero = featured ? createHero(featured) : null;
+
+    if (hero) heroSlot.append(hero);
+    rowsSlot.append(...rows.map((row) => row.element));
+  } catch (error) {
+    // Rows built before the failure never reach the page; release their observers.
+    for (const row of rows) row.destroy();
+    throw error;
   }
 
-  if (rowCount === 0 && !featured) {
-    showStatus(status, 'Er zijn nog geen boeken om te laten zien.');
-  } else {
-    status.hidden = true;
-    status.textContent = '';
-  }
+  return Boolean(featured) || rows.length > 0;
 }
 
 async function init() {
   const heroSlot = document.getElementById('hero');
   const rowsSlot = document.getElementById('rijen');
+  // A live region: it stays in the DOM and only its text changes, so screen
+  // readers announce each message.
   const status = document.getElementById('home-status');
 
-  showStatus(status, 'Boeken laden…');
+  status.textContent = 'Boeken laden…';
   try {
-    await render(heroSlot, rowsSlot, status);
+    const hasContent = await render(heroSlot, rowsSlot);
+    status.textContent = hasContent ? '' : 'Er zijn nog geen boeken om te laten zien.';
   } catch (error) {
     console.error('[home] Could not build the home page:', error);
-    for (const destroy of carousels.splice(0)) destroy();
-    heroSlot.replaceChildren();
-    rowsSlot.replaceChildren();
-    showStatus(status, 'De boeken konden niet worden geladen. Probeer de pagina opnieuw te laden.');
+    status.textContent = 'De boeken konden niet worden geladen. Probeer de pagina opnieuw te laden.';
   }
 }
 

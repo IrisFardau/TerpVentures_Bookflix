@@ -10,35 +10,10 @@
   color: var(--color-text-muted);
 }
 
-/* Cover: a 2:3 frame used in the hero and the cards */
-
-.cover {
-  position: relative;
-  aspect-ratio: 2 / 3;
-  overflow: hidden;
-  border-radius: var(--radius-sm);
-  background: var(--color-surface-raised);
-  box-shadow: var(--shadow-card);
-}
-
-.cover__image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* Placeholder: the generic cover with the book title on top. */
-.cover__title {
-  position: absolute;
-  inset: auto 0 0;
-  padding: var(--space-6) var(--space-3) var(--space-3);
-  background: linear-gradient(transparent, rgba(0, 0, 0, 0.75));
-  color: var(--color-text);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
-  line-height: 1.3;
-  text-align: center;
-  overflow-wrap: anywhere;
+/* The status is a live region, so it stays rendered (and in the accessibility
+   tree) while empty; only its padding is dropped. */
+.home-status:empty {
+  padding-block: 0;
 }
 
 /* Hero */
@@ -50,13 +25,14 @@
   margin-bottom: var(--space-8);
 }
 
-.hero__backdrop {
+/* Blurred copy of the cover as a backdrop. home.js sets --hero-backdrop to an
+   absolute url(), so it resolves the same wherever the variable is used. */
+.hero::before {
+  content: "";
   position: absolute;
   inset: 0;
   z-index: -2;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  background: var(--hero-backdrop, none) center / cover no-repeat;
   filter: blur(40px) saturate(1.2) brightness(0.45);
   transform: scale(1.2);
 }
@@ -88,17 +64,6 @@
 .hero__body {
   flex: 1 1 20rem;
   max-width: 44rem;
-}
-
-.badge {
-  display: inline-block;
-  padding: var(--space-1) var(--space-3);
-  border-radius: var(--radius-pill);
-  background: var(--color-accent-soft);
-  color: var(--color-text);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  box-shadow: inset 0 0 0 1px var(--color-accent);
 }
 
 .hero__title {
@@ -179,17 +144,17 @@
   transition: background-color var(--transition-fast), opacity var(--transition-fast);
 }
 
-.carousel__button:hover {
-  background: var(--color-surface-hover);
-}
-
 .carousel__button[aria-disabled="true"] {
   opacity: 0.35;
   cursor: default;
 }
 
-.carousel__button[aria-disabled="true"]:hover {
-  background: var(--color-surface-raised);
+/* Hover effects only on devices that can hover; on touch screens they would
+   stick after a tap. */
+@media (hover: hover) {
+  .carousel__button:not([aria-disabled="true"]):hover {
+    background: var(--color-surface-hover);
+  }
 }
 
 .carousel__button svg {
@@ -244,13 +209,19 @@
   transition: transform var(--transition-fast), box-shadow var(--transition-fast);
 }
 
-.book-card:hover .book-card__cover,
 .book-card:focus-visible .book-card__cover {
   transform: translateY(-4px);
 }
 
-.book-card:hover .book-card__cover {
-  box-shadow: var(--shadow-card), 0 0 0 2px var(--color-accent);
+@media (hover: hover) {
+  .book-card:hover .book-card__cover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-card), 0 0 0 2px var(--color-accent);
+  }
+
+  .book-card:hover .book-card__title {
+    color: var(--color-accent-hover);
+  }
 }
 
 .book-card:focus-visible .book-card__cover {
@@ -266,10 +237,6 @@
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
   line-height: 1.3;
-}
-
-.book-card:hover .book-card__title {
-  color: var(--color-accent-hover);
 }
 
 .book-card__meta {

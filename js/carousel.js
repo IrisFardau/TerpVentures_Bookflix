@@ -4,7 +4,9 @@
 // extra code. The arrow buttons scroll one "page". Each row is a single Tab stop
 // (roving tabindex): Tab enters the row on the last focused card and the next
 // Tab leaves the row; within a row, the arrow keys, Home and End move the focus
-// from card to card.
+// from card to card. When the row is scrolled while the focus is elsewhere (for
+// example with the arrow buttons), the Tab stop moves to the first fully visible
+// card, so tabbing back in does not scroll the row back.
 
 import { createCover, detailUrl, el } from './dom.js';
 
@@ -13,8 +15,23 @@ const CHEVRON_PATHS = {
   next: 'M9 5l7 7-7 7',
 };
 const KEYBOARD_HINT = 'Gebruik de pijltjestoetsen, Home en End om tussen de boeken te bewegen.';
+const HINT_ID = 'carousel-hint';
 
 let carouselCount = 0;
+
+/**
+ * Id of the keyboard hint, shared by every row. The element is hidden, so it is
+ * not read in browse mode; aria-describedby still uses its text.
+ */
+function keyboardHintId() {
+  if (!document.getElementById(HINT_ID)) {
+    const hint = el('p', '', KEYBOARD_HINT);
+    hint.id = HINT_ID;
+    hint.hidden = true;
+    document.body.append(hint);
+  }
+  return HINT_ID;
+}
 
 function chevron(direction) {
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -36,12 +53,11 @@ function adaptationLabel(type) {
   return type.charAt(0).toUpperCase() + type.slice(1);
 }
 
-function createCard(book, hintId) {
+function createCard(book) {
   const item = el('li', 'carousel__item');
   const link = el('a', 'book-card');
   link.href = detailUrl(book.id);
   link.tabIndex = -1;
-  link.setAttribute('aria-describedby', hintId);
 
   const adaptation = `${adaptationLabel(book.adaptation.type)}: ${book.adaptation.title}`;
   link.append(
@@ -77,7 +93,7 @@ export function createCarousel(title, books) {
   carouselCount += 1;
   const headingId = `carousel-${carouselCount}-titel`;
   const trackId = `carousel-${carouselCount}-boeken`;
-  const hintId = `carousel-${carouselCount}-hint`;
+  const hintId = keyboardHintId();
 
   const section = el('section', 'carousel');
   section.setAttribute('aria-labelledby', headingId);
@@ -91,27 +107,42 @@ export function createCarousel(title, books) {
   controls.append(prev, next);
   header.append(heading, controls);
 
-  const hint = el('p', 'visually-hidden', KEYBOARD_HINT);
-  hint.id = hintId;
-
   const track = el('ul', 'carousel__track');
   track.id = trackId;
   // Safari drops list semantics when list-style is none; the role keeps them.
   track.setAttribute('role', 'list');
-  track.append(...books.map((book) => createCard(book, hintId)));
+  track.append(...books.map((book) => createCard(book)));
 
-  section.append(header, hint, track);
+  section.append(header, track);
 
-  // Roving tabindex: only the active card is in the Tab order.
+  // Roving tabindex: only the active card is in the Tab order. While the focus
+  // is outside the row, the active card also carries the keyboard hint, so it
+  // is announced once when the focus enters the row and not on every arrow key.
   const cards = [...track.querySelectorAll('.book-card')];
   let activeCard = cards[0];
-  if (activeCard) activeCard.tabIndex = 0;
+  if (activeCard) {
+    activeCard.tabIndex = 0;
+    activeCard.setAttribute('aria-describedby', hintId);
+  }
 
   function setActive(card) {
     if (card === activeCard) return;
-    if (activeCard) activeCard.tabIndex = -1;
+    const hasHint = activeCard?.hasAttribute('aria-describedby');
+    if (activeCard) {
+      activeCard.tabIndex = -1;
+      activeCard.removeAttribute('aria-describedby');
+    }
     card.tabIndex = 0;
+    if (hasHint) card.setAttribute('aria-describedby', hintId);
     activeCard = card;
+  }
+
+  /** After a scroll with the focus elsewhere: make the first fully visible card the Tab stop. */
+  function syncActiveToScroll() {
+    if (track.contains(document.activeElement)) return;
+    const left = track.getBoundingClientRect().left;
+    const firstVisible = cards.find((card) => card.getBoundingClientRect().left >= left - 1);
+    if (firstVisible) setActive(firstVisible);
   }
 
   // Buttons use aria-disabled rather than disabled, so a keyboard user who
@@ -144,6 +175,7 @@ export function createCarousel(title, books) {
     frame = requestAnimationFrame(() => {
       frame = 0;
       update();
+      syncActiveToScroll();
     });
   }
 
@@ -182,6 +214,15 @@ export function createCarousel(title, books) {
     { signal },
   );
 
+  // Focus leaving the row: put the hint back on the Tab stop for the next entry.
+  track.addEventListener(
+    'focusout',
+    (event) => {
+      if (!track.contains(event.relatedTarget)) activeCard?.setAttribute('aria-describedby', hintId);
+    },
+    { signal },
+  );
+
   track.addEventListener(
     'keydown',
     (event) => {
@@ -199,6 +240,8 @@ export function createCarousel(title, books) {
       const target = cards[targets[event.key]];
       if (target === undefined) return;
       event.preventDefault();
+      // Moving within the row: the hint was already announced on entry.
+      activeCard.removeAttribute('aria-describedby');
       setActive(target);
       target.focus();
     },
