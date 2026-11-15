@@ -101,11 +101,11 @@ This contract is the interface between the two streams. Changing it requires agr
 | `adaptation.year` | number | yes | |
 | `adaptation.platform` | string | yes | "Netflix" for this set |
 | `adaptation.note` | string | no | For example when the adaptation is only inspired by the book |
-| `teaser` | string | yes | Dutch, spoiler-free, what the book is about (40 to 70 words) |
-| `extraTeaser` | string | yes | Dutch, spoiler-free, what the book offers beyond the film or series (40 to 70 words) |
+| `teaser` | string | yes | Dutch, spoiler-free, what the book is about (30 to 60 words) |
+| `extraTeaser` | string | yes | Dutch, spoiler-free, what the book offers beyond the film or series (30 to 60 words) |
 | `links` | object[] | yes | Where to get the book, `{ "label": "Bibliotheek", "url": "https://..." }`. Starts with the bibliotheek.nl title page; more can be added later |
 
-`tools/validate_books.py` checks the types and required fields above. With `--strict` it also checks that `teaser` and `extraTeaser` are 40 to 70 words, that the cover file exists, that `length` matches `pages`, and that `links` has at least one entry. All ten book files already meet the contract (see [PR #1](https://github.com/IrisFardau/TerpVentures_Bookflix/pull/1)).
+`tools/validate_books.py` checks the types and required fields above. With `--strict` it also checks that `teaser` and `extraTeaser` are 30 to 60 words, that the cover file exists, that `length` matches `pages`, and that `links` has at least one entry. All ten book files already meet the contract (see [PR #1](https://github.com/IrisFardau/TerpVentures_Bookflix/pull/1)).
 
 `data/catalog.json`:
 
@@ -190,7 +190,7 @@ Both streams depend only on this plan and can start immediately.
 - Files: `tools/validate_books.py`, `docs/CONTENT_GUIDE.md`.
 - Already done in PR #1: `tools/fetch_covers.py` and all ten book files with covers.
 - `validate_books.py`: checks every book file against the contract, that the filename matches `id`, and that catalogue ids resolve to a file; with `--strict` also the checks listed under the data contract. Exit code 1 on errors.
-- `CONTENT_GUIDE.md`: tone for the target group, the spoiler-free rule, how to write `teaser` and `extraTeaser` (40 to 70 words, `extraTeaser` about what the book adds), choosing `age` and `contentWarnings`, the reading-time formula, and how to find the edition, ISBN and link on bibliotheek.nl.
+- `CONTENT_GUIDE.md`: tone for the target group, the spoiler-free rule, how to write `teaser` and `extraTeaser` (30 to 60 words, `extraTeaser` about what the book adds), choosing `age` and `contentWarnings`, the reading-time formula, and how to find the edition, ISBN and link on bibliotheek.nl.
 - Acceptance: the validator passes on all ten books, also with `--strict`, and fails with a clear message on a deliberately broken file.
 
 ### Phase 2: Core features
