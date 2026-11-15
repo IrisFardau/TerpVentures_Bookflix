@@ -101,11 +101,11 @@ This contract is the interface between the two streams. Changing it requires agr
 | `adaptation.year` | number | yes | |
 | `adaptation.platform` | string | yes | "Netflix" for this set |
 | `adaptation.note` | string | no | For example when the adaptation is only inspired by the book |
-| `teaser` | string | yes | Dutch, spoiler-free, what the book is about (30 to 60 words) |
-| `extraTeaser` | string | yes | Dutch, spoiler-free, what the book offers beyond the film or series (30 to 60 words) |
+| `teaser` | string | yes | Dutch, spoiler-free, what the book is about (15 to 60 words) |
+| `extraTeaser` | string | yes | Dutch, spoiler-free, what the book offers beyond the film or series (15 to 60 words) |
 | `links` | object[] | yes | Where to get the book, `{ "label": "Bibliotheek", "url": "https://..." }`. Starts with the bibliotheek.nl title page; more can be added later |
 
-`tools/validate_books.py` checks the types and required fields above, the ISBN-13 check digit, unknown fields (typos), that the filename matches `id`, and that every id in the catalogue has a file. With `--strict` it also checks the content rules from section 5 and `docs/CONTENT_GUIDE.md`: at most 350 pages, `length` and `readingTimeMinutes` match `pages`, `teaser` and `extraTeaser` are 30 to 60 words, the cover is a JPEG at `assets/covers/<id>.jpg`, the first link is the bibliotheek.nl title page, `adaptation.platform` is "Netflix", two or three genres with "Graphic novel" first for a graphic novel, lowercase content warnings, and that each book is in the right catalogue rows. Style hints (empty praise, possible spoilers, new genres, unused covers, short/medium balance) are warnings that don't fail the run. All ten book files pass `--strict`.
+`tools/validate_books.py` checks the types and required fields above, the ISBN-13 check digit, unknown fields (typos), that the filename matches `id`, and that every id in the catalogue has a file. With `--strict` it also checks the content rules from section 5 and `docs/CONTENT_GUIDE.md`: at most 350 pages, `length` and `readingTimeMinutes` match `pages`, `teaser` and `extraTeaser` are 15 to 60 words, the cover is a JPEG at `assets/covers/<id>.jpg`, the first link is the bibliotheek.nl title page, `adaptation.platform` is "Netflix", two or three genres with "Graphic novel" first for a graphic novel, lowercase content warnings, and that each book is in the right catalogue rows. Style hints (empty praise, possible spoilers, new genres, unused covers, short/medium balance) are warnings that don't fail the run. All ten book files pass `--strict`.
 
 `data/catalog.json`:
 
@@ -190,12 +190,12 @@ Both streams depend only on this plan and can start immediately.
 - Files: `tools/validate_books.py`, `docs/CONTENT_GUIDE.md`.
 - Already done in PR #1: `tools/fetch_covers.py` and all ten book files with covers.
 - `validate_books.py`: checks every book file against the contract, that the filename matches `id`, and that catalogue ids resolve to a file; with `--strict` also the checks listed under the data contract. Exit code 1 on errors.
-- `CONTENT_GUIDE.md`: tone for the target group, the spoiler-free rule, how to write `teaser` and `extraTeaser` (30 to 60 words, `extraTeaser` about what the book adds), choosing `age` and `contentWarnings`, the reading-time formula, and how to find the edition, ISBN and link on bibliotheek.nl.
+- `CONTENT_GUIDE.md`: tone for the target group, the spoiler-free rule, how to write `teaser` and `extraTeaser` (15 to 60 words, `extraTeaser` about what the book adds), choosing `age` and `contentWarnings`, the reading-time formula, and how to find the edition, ISBN and link on bibliotheek.nl.
 - Acceptance: the validator passes on all ten books, also with `--strict`, and fails with a clear message on a deliberately broken file.
 
 *1I notes (decisions and deviations):*
 - 1I was built on the branch `claude/charming-mayer-xmj84x` instead of `phase-1i-data-tooling`, together with the book data and the plan updates for the new contract.
-- The teaser limit is 30 to 60 words instead of the 40 to 70 first written in section 4: six of the ten texts are shorter than 40 words, and short suits the target group.
+- The teaser limit is 15 to 60 words instead of the 40 to 70 first written in section 4: several texts are shorter than 40 words, and short suits the target group. The minimum went from 30 to 15 in 2I, when the Heartstopper `extraTeaser` was cut to its last sentence (21 words) at the owner's request.
 - `validate_books.py` has three levels: contract errors (always), content errors (`--strict`) and warnings (never fail). Rules that need judgement, like spoilers and empty praise, are warnings based on word lists in the script; they help a reviewer but don't replace one.
 - The validator has a hidden `--root <dir>` option to run it on a copy of `data/` and `assets/`. The acceptance test used it on copies with a broken JSON file, a wrong ISBN check digit, too many pages, a missing cover, a non-JPEG cover, a wrong `id`, an unknown field and catalogue mistakes; each gave a clear error and exit code 1.
 - The content guide is in English like the other docs, with Dutch examples.
@@ -218,7 +218,7 @@ Both streams depend on 1R **and** 1I being merged: the UI needs the shell and da
 
 *2I notes (decisions and deviations):*
 - Built on the branch `claude/charming-mayer-xmj84x` instead of `phase-2i-detail-page`, like 1I.
-- Layout: cover left and title block right from 48rem wide, stacked on phones. Order: badge ("Bekend van de Netflix-serie <title> (<year>)", with `adaptation.note` below it), title, subtitle, author, genres, `teaser`, link buttons; then "Wat biedt het boek extra?" as a highlighted card, the content warnings under "Goed om te weten", and "Over dit boek" with age, length and pages, reading time, format, language, series, original title, edition and ISBN. The adaptation title is in the badge because it often differs from the book title.
+- Layout: cover left and title block right from 48rem wide, stacked on phones. Order: badge ("Bekend van de Netflix-serie <title> (<year>)", with `adaptation.note` below it), title, subtitle, author, genres, `teaser`, link buttons; then "Wat biedt het boek extra?" as a highlighted card, the content warnings under "Goed om te weten", and "Over dit boek" with age, length and pages, reading time, format, language, series and original title. Publisher, year and ISBN stay in the data but are not shown. The adaptation title is in the badge because it often differs from the book title.
 - A blurred copy of the cover fills the top of the page, in the spirit of the 1R media-player theme. Its URL is made absolute in JavaScript, because `url()` in a CSS custom property resolves against `css/detail.css`.
 - Reading time is shown as "ca. 2 uur en 15 min". The link labelled "Bibliotheek" shows as "Leen bij de Bibliotheek"; other labels are used as written. The first link is the primary button. Only `https:` links get a button, and every value from the data is set with `textContent`, never as HTML.
 - Not found: an unknown or invalid id shows "Dit boek kunnen we niet vinden", a missing id shows "Geen boek gekozen", both with a button back to the home page. Without JavaScript a `<noscript>` message shows.
@@ -226,7 +226,7 @@ Both streams depend on 1R **and** 1I being merged: the UI needs the shell and da
 - `document.title` is set to "<title> – Bookflix" (or "Boek niet gevonden – Bookflix"). The description meta tag per book stays for 3I.
 - The phase 1 smoke-test script in `boek.html` was replaced by `js/detail.js`. `css/base.css` and `css/tokens.css` were not changed; `.btn`, `.section-title`, `.page-title` and `.lead` are reused.
 - Tested in Chromium at 1280 and 390 px wide: all ten books render with no console errors and no horizontal scroll; an unknown id and a missing id show their messages; with `links` replaced by a `javascript:` URL no button shows; HTML in a title is shown as text; a missing cover shows the placeholder; tab order is skip link, logo, Home, back link, library button. `validate_books.py --strict` and `check_shell.py` pass.
-- Content review of the five medium books (I) against the content guide: no changes needed; all texts are within 30 to 60 words and spoiler-free.
+- Content review of the five medium books (I) against the content guide: all texts are within 15 to 60 words and spoiler-free. The Heartstopper `extraTeaser` was shortened to "Je ontmoet Nick en Charlie zoals de bedenker ze voor het eerst tekende, met kleine momenten die in de serie net anders gaan."
 
 ### Phase 3: Polish
 

@@ -83,8 +83,6 @@ function buildFacts(book) {
   ];
   if (book.series) facts.push(['Serie', book.series]);
   if (book.originalTitle) facts.push(['Oorspronkelijke titel', book.originalTitle]);
-  facts.push(['Uitgave', `${book.publisher}, ${book.year}`]);
-  facts.push(['ISBN', book.isbn]);
 
   const list = el('dl', 'detail-facts');
   for (const [term, value] of facts) {

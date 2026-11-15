@@ -86,7 +86,7 @@ EARLIEST_ADAPTATION_YEAR = 1900
 
 MAX_PAGES = 350
 SHORT_BELOW = 200               # kort: < 200 pages, middel: 200 to 350
-TEASER_WORDS = (30, 60)
+TEASER_WORDS = (15, 60)
 GENRE_COUNT = (2, 3)
 AGE_RANGE = (6, 18)
 MINUTES_PER_PAGE = {"roman": 1.0, "graphic novel": 0.5}

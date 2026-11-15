@@ -106,7 +106,7 @@ More links (a bookshop, an e-book) may follow later. `label` is the text on the 
 
 ## 5. Writing the two teasers
 
-Both are **30 to 60 words**, Dutch, and **spoiler-free** (section 5.3). Read them aloud: if you run out of breath, the sentence is too long.
+Both are **15 to 60 words**, Dutch, and **spoiler-free** (section 5.3). Read them aloud: if you run out of breath, the sentence is too long.
 
 ### 5.1 `teaser`: what the book is about
 
