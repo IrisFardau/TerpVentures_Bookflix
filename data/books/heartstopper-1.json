@@ -1,0 +1,14 @@
+{
+  "id": "heartstopper-1",
+  "title": "Heartstopper 1",
+  "author": "Alice Oseman",
+  "isbn": "9789000378807",
+  "adaptation": {
+    "type": "serie",
+    "title": "Heartstopper",
+    "year": 2022,
+    "platform": "Netflix"
+  },
+  "genres": ["Romantiek", "Graphic novel", "LHBTIQ+"],
+  "age": "12+"
+}

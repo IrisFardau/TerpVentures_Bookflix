@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600" width="400" height="600" role="img" aria-label="Geen omslag beschikbaar">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#22222b"/>
+      <stop offset="1" stop-color="#0b0b0f"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="600" fill="url(#bg)"/>
+  <rect width="400" height="8" fill="#e50914"/>
+  <g fill="none" stroke="#a7a7b3" stroke-width="10" stroke-linejoin="round" stroke-linecap="round" opacity="0.6">
+    <path d="M200 250 C170 230 130 225 100 230 V350 C130 345 170 350 200 370 C230 350 270 345 300 350 V230 C270 225 230 230 200 250 Z"/>
+    <path d="M200 250 V370"/>
+  </g>
+  <text x="200" y="540" text-anchor="middle" fill="#e50914" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif" font-size="36" font-weight="700" letter-spacing="2">BOOKFLIX</text>
+</svg>

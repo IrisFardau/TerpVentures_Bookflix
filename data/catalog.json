@@ -1,0 +1,38 @@
+{
+  "featured": "de-hongerspelen",
+  "rows": [
+    {
+      "title": "Bekend van Netflix",
+      "books": ["heartstopper-1", "schim-en-schaduw"]
+    },
+    {
+      "title": "Van boek naar film",
+      "books": [
+        "harry-potter-steen-der-wijzen",
+        "de-hongerspelen",
+        "oorlogswinter",
+        "duin",
+        "wonder",
+        "the-hate-u-give"
+      ]
+    },
+    {
+      "title": "Fantasy",
+      "books": [
+        "harry-potter-steen-der-wijzen",
+        "percy-jackson-bliksemdief",
+        "schim-en-schaduw",
+        "duin"
+      ]
+    },
+    {
+      "title": "Series om te bingen",
+      "books": [
+        "heartstopper-1",
+        "percy-jackson-bliksemdief",
+        "de-zomer-dat-ik-mooi-werd",
+        "schim-en-schaduw"
+      ]
+    }
+  ]
+}

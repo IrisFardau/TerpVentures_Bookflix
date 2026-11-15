@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Boek – Bookflix</title>
+  <meta name="description" content="Lees wat het boek je geeft naast de film of serie.">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/base.css">
+</head>
+<body>
+  <a class="skip-link" href="#inhoud">Naar inhoud</a>
+
+  <header class="site-header">
+    <div class="container site-header__inner">
+      <a class="site-logo" href="index.html">Bookflix</a>
+      <nav class="site-nav" aria-label="Hoofdmenu">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="inhoud" class="site-main" tabindex="-1">
+    <div class="container">
+      <h1 class="page-title">Boekdetails</h1>
+      <p class="lead">Boekdetails worden geladen…</p>
+      <p><a href="index.html">Terug naar home</a></p>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>Bookflix – van scherm naar boek. Een prototype.</p>
+      <p>Boeken lenen? Kijk op <a href="https://www.bibliotheek.nl" target="_blank" rel="noopener">bibliotheek.nl</a>.</p>
+    </div>
+  </footer>
+
+  <!-- Phase 1 smoke test of the data loader; replaced by js/detail.js in phase 2. -->
+  <script type="module">
+    import { loadAllBooks, loadBook } from './js/data.js';
+
+    const id = new URLSearchParams(window.location.search).get('id');
+    if (id) {
+      loadBook(id).then((book) => console.info('[detail] Book:', book));
+    } else {
+      loadAllBooks().catch((error) => console.error('[detail] Could not load the catalogue:', error));
+    }
+  </script>
+</body>
+</html>

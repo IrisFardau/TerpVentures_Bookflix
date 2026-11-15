@@ -1,0 +1,13 @@
+{
+  "id": "harry-potter-steen-der-wijzen",
+  "title": "Harry Potter en de Steen der Wijzen",
+  "author": "J.K. Rowling",
+  "isbn": "9789061699767",
+  "adaptation": {
+    "type": "film",
+    "title": "Harry Potter en de Steen der Wijzen",
+    "year": 2001
+  },
+  "genres": ["Fantasy", "Avontuur"],
+  "age": "10+"
+}

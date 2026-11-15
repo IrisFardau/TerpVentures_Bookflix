@@ -15,7 +15,7 @@ Each stream updates only its own rows.
 | Phase | Stream | Branch | Depends on | Status |
 |---|---|---|---|---|
 | 0 Plan | joint | `main` | none | Done |
-| 1R Site shell | R | `phase-1r-site-shell` | 0 | Not started |
+| 1R Site shell | R | `phase-1r-site-shell` | 0 | In review |
 | 1I Data tooling | I | `phase-1i-data-tooling` | 0 | Not started |
 | 2R Home page and carousels | R | `phase-2r-home-carousels` | 1R, 1I | Not started |
 | 2I Detail page | I | `phase-2i-detail-page` | 1R, 1I | Not started |
@@ -160,6 +160,15 @@ Both streams depend only on this plan and can start immediately.
 - Content: metadata for the five R books (all non-strict fields, verified Dutch title and ISBN).
 - README: how to run and test locally.
 - Acceptance: both pages load on localhost with header and footer; the browser console lists the loaded R books and warns about the five I books not yet present.
+
+*1R notes (decisions and deviations):*
+- Header and footer markup is duplicated as static HTML in `index.html` and `boek.html`. With no build step there are no includes, and static markup works without JavaScript. Keep the two copies in sync.
+- Both pages have a small inline module script that calls `js/data.js` and logs to the console. Phase 2 replaces it with `js/home.js` and `js/detail.js`.
+- `js/data.js` also rejects ids that don't match `^[a-z0-9]+(-[a-z0-9]+)*$` before fetching, and checks the required (non-strict) fields. Results are cached per id. `loadAllBooks()` returns a `Map<id, book>` in catalogue order. `loadCatalog()` throws when the catalogue can't load, because no page works without it.
+- `data/catalog.json`: the featured book is `de-hongerspelen`. Rows: "Bekend van Netflix", "Van boek naar film", "Fantasy", "Series om te bingen".
+- `assets/placeholder-cover.svg` shows a generic book icon and the logo, not the book title. A static SVG can't show a different title per book, so 2R and 2I put the title over it in HTML.
+- R books: Heartstopper uses the Dutch title "Heartstopper 1" (Van Goor, 2021). Duin uses the 2021 Volt edition. The ISBNs came from retailer and library listings and pass the checksum, but only the publisher or the KB catalogue can confirm them for certain. Oorlogswinter's ISBN (9789060691182) is an older Lemniscaat edition: **replace it with the current Lemniscaat paperback ISBN when the bibliotheek.nl link is looked up in 2R**.
+- Genre names used so far: Fantasy, Avontuur, Dystopie, Spanning, Romantiek, Graphic novel, LHBTIQ+, Oorlog, Sciencefiction. Stream I: please reuse these names where they fit.
 
 **1I Data tooling** (`phase-1i-data-tooling`)
 - Files: `tools/validate_books.py`, `tools/fetch_covers.py`, `docs/CONTENT_GUIDE.md`, and `data/books/` files for the five I books.
